@@ -1,0 +1,20 @@
+{
+  "name": "z-monitor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZARD0520/z-monitor.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ZARD0520/z-monitor/issues"
+  },
+  "homepage": "https://github.com/ZARD0520/z-monitor#readme"
+}
