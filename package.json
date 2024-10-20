@@ -3,18 +3,23 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
+    "build": "pnpm recursive run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ZARD0520/z-monitor.git"
-  },
   "keywords": [],
-  "author": "",
+  "author": "zard",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ZARD0520/z-monitor/issues"
+  "dependencies": {
+    "@libc/core": "workspace:^"
   },
-  "homepage": "https://github.com/ZARD0520/z-monitor#readme"
+  "devDependencies": {
+    "@babel/core": "^7.25.8",
+    "@babel/preset-env": "^7.25.8",
+    "@rollup/plugin-babel": "^6.0.4",
+    "rollup": "^4.24.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "terser": "^5.36.0"
+  }
 }
