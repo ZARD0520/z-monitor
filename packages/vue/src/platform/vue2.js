@@ -1,6 +1,6 @@
 import { Plugin } from '@libc/core'
 
-export function registerVue2(Vue) {
+export function register(Vue) {
   return function (mt, plugins = null) {
     if (!Vue) {
       return console.error('必须要传入Vue')
