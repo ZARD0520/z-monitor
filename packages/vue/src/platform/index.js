@@ -1,0 +1,18 @@
+import { registerVue2, ErrorVue2, createRouterMonitorVue2 } from './vue2'
+import { registerVue3, ErrorVue3, createRouterMonitorVue3 } from './vue3'
+
+export function usePlatform(platform) {
+  if (platform === 'vue2') {
+    return {
+      register: registerVue2,
+      ERROR: ErrorVue2,
+      createRouterMonitor: createRouterMonitorVue2
+    }
+  } else if (platform === 'vue3') {
+    return {
+      register: registerVue3,
+      ERROR: ErrorVue3,
+      createRouterMonitor: createRouterMonitorVue3
+    }
+  }
+}
