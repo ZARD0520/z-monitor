@@ -1,4 +1,5 @@
 import CLICK from './CLICK.js'
+import ERROR from './ERROR.js'
 import REJECT_ERROR from './REJECT_ERROR.js'
 import AJAX from './AJAX.js'
 import USERINFO from './USERINFO.js'
@@ -9,6 +10,7 @@ import VIDEO_RECORD from './VIDEO_RECORD.js'
 
 export default {
   CLICK,
+  ERROR,
   REJECT_ERROR,
   AJAX,
   USERINFO,

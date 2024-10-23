@@ -1,5 +1,5 @@
 import { defaultPluginConfig, Monitor } from '@libc/core'
-import { CLICK, REJECT_ERROR, COUNT, AJAX, VIDEO_RECORD, USERINFO } from '@libc/core/plugins'
+import { CLICK, ERROR, REJECT_ERROR, COUNT, AJAX, VIDEO_RECORD, USERINFO } from '@libc/core/plugins'
 import { usePlatform } from './platform'
 
 const defaultConfig = {
@@ -9,7 +9,7 @@ const defaultConfig = {
 
 export default function createMonitor(config = defaultConfig, pluginConfig = defaultPluginConfig, Vue, Router) {
   try {
-    const { register, ERROR, createRouterMonitor } = usePlatform(config.platform)
+    const { register, ERROR: VUE_ERROR, createRouterMonitor } = usePlatform(config.platform)
     const mergeConfig = {
       key: config.key,
       plugins: {}
@@ -24,7 +24,8 @@ export default function createMonitor(config = defaultConfig, pluginConfig = def
     register(Vue)(monitor)
     // 注册插件
     monitor.pluginCall('click', CLICK) // 监听点击
-    monitor.pluginCall('error', ERROR) // 监听vue组件错误
+    monitor.pluginCall('ERROR', ERROR) // 监听全局错误
+    monitor.pluginCall('platform_error', VUE_ERROR) // 监听vue组件错误
     monitor.pluginCall('reject_error', REJECT_ERROR) // 监听异步错误
     monitor.pluginCall('count', COUNT)// 监听统计
     if (Router) {
