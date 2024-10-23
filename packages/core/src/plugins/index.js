@@ -5,6 +5,7 @@ import USERINFO from './USERINFO.js'
 import COUNT from './COUNT.js'
 import HTTP from './HTTP.js'
 import LOG from './LOG.js'
+import VIDEO_RECORD from './VIDEO_RECORD.js'
 
 export default {
   CLICK,
@@ -13,5 +14,6 @@ export default {
   USERINFO,
   COUNT,
   HTTP,
-  LOG
+  LOG,
+  VIDEO_RECORD
 }
