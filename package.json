@@ -5,7 +5,12 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "build:vue": "pnpm --filter ./packages/vue run build",
+    "build:react": "pnpm --filter ./packages/react run build",
     "build": "pnpm recursive run build",
+    "publish": "pnpm -r publish",
+    "publish:vue": "pnpm --filter ./packages/vue publish",
+    "publish:react": "pnpm --filter ./packages/react publish",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
