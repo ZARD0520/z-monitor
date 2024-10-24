@@ -35,6 +35,10 @@ export default class HTTP {
       window.log_report = true;
       this.customMethod(data, done);
       return;
+    } else {
+      if (this.mt.plugins.userInfo.open) {
+        this.mt.plugins.userInfo.getUserInfo(data[0]?.time)
+      }
     }
     this.report(data, done);
   }

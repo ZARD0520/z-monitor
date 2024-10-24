@@ -11,11 +11,13 @@ export default class USERINFO extends Plugin {
       return console.error('customMethod is required')
     }
     const data = this.options.customMethod
-    this.send({
-      type: this.TYPES.USERINFO,
-      level: this.LEVELS.INFO,
-      time: time,
-      data,
-    });
+    if (data) {
+      this.send({
+        type: this.TYPES.USERINFO,
+        level: this.LEVELS.INFO,
+        time: time,
+        data,
+      });
+    }
   }
 }

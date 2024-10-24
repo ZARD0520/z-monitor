@@ -29,7 +29,7 @@ export default function createMonitor(config = defaultConfig, pluginConfig = def
     monitor.pluginCall('reject_error', REJECT_ERROR) // 监听异步错误
     monitor.pluginCall('count', COUNT)// 监听统计
     if (Router) {
-      monitor.pluginCall('routerChange', createRouterMonitor(router))// 监听路由改变
+      monitor.pluginCall('routerChange', createRouterMonitor(Router))// 监听路由改变
     }
     if (mergeConfig.ajax?.open) {
       monitor.pluginCall('ajax', AJAX) // 监听ajax请求
