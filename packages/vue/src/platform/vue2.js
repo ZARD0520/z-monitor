@@ -25,7 +25,7 @@ export function register(Vue) {
   }
 }
 
-export class Error extends Plugin {
+export class ERROR extends Plugin {
   init() {
     const isVue2 = this.mt.platformName === 'vue2';
     if (!isVue2) {
