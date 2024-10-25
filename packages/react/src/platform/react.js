@@ -64,18 +64,15 @@ export class ERROR extends Plugin {
       }
 
       static getDerivedStateFromError(error) {
-        // 更新 state 以便在下一次渲染时显示降级 UI
         return { hasError: true };
       }
 
       componentDidCatch(error, errorInfo) {
-        // 调用错误处理函数
         handleError(error, errorInfo);
       }
 
       render() {
         if (this.state.hasError) {
-          // 你可以选择渲染任何自定义的降级 UI
           return <h1>Something went wrong.</h1>;
         }
 
