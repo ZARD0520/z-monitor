@@ -9,7 +9,7 @@ const defaultConfig = {
 
 export default function createMonitor(config = defaultConfig, pluginConfig = defaultPluginConfig, Vue, Router) {
   try {
-    const { register, ERROR: VUE_ERROR, createRouterMonitor } = usePlatform(config.platform)
+    const { register, ERROR: VUE_ERROR, createRouterMonitor, createPerformanceObserve } = usePlatform(config.platform)
     const mergeConfig = {
       key: config.key,
       plugins: {}
@@ -30,6 +30,9 @@ export default function createMonitor(config = defaultConfig, pluginConfig = def
     monitor.pluginCall('count', COUNT)// 监听统计
     if (Router) {
       monitor.pluginCall('routerChange', createRouterMonitor(Router))// 监听路由改变
+      if (mergeConfig.pagePerformance?.open) {
+        monitor.pluginCall('pagePerformance', createPerformanceObserve(mergeConfig.pagePerformance.entryTypes, Router))// 监听页面性能
+      }
     }
     if (mergeConfig.ajax?.open) {
       monitor.pluginCall('ajax', AJAX) // 监听ajax请求

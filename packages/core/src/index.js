@@ -35,6 +35,10 @@ export const defaultPluginConfig = {
     waitTime: 2000, // 延迟多久上报，采集报错后的内容
     checkoutEveryNth: 300, // 每N个数据做切片
     customRecordId: ''
+  },
+  pagePerformance: {
+    open: false,
+    entryTypes: ['paint', 'resource', 'longtask', 'first-input', 'largest-contentful-paint']
   }
 }
 

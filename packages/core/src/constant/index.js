@@ -41,6 +41,10 @@ export const TYPES = {
     value: 'VideoRecord',
     text: '视频回放',
   },
+  PERFORMANCE: {
+    value: 'PERFORMANCE',
+    text: '页面性能'
+  }
 };
 
 export const LEVELS = {
