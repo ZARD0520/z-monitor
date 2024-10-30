@@ -7,9 +7,9 @@ const defaultConfig = {
   key: 'z-monitor-' + Date.now().toString() // 唯一key
 }
 
-export default function createMonitor(config = defaultConfig, pluginConfig = defaultPluginConfig, React, Router) {
+export default function createMonitor(config = defaultConfig, pluginConfig = defaultPluginConfig, React, { useHistory, useLocation }) {
   try {
-    const { register, ERROR: REACT_ERROR, createRouterMonitor } = usePlatform(config.platform)
+    const { register, ERROR: REACT_ERROR, createRouterMonitor, createPerformanceObserve } = usePlatform(config.platform)
     const mergeConfig = {
       key: config.key,
       plugins: {}
@@ -28,8 +28,13 @@ export default function createMonitor(config = defaultConfig, pluginConfig = def
     monitor.pluginCall('platform_error', REACT_ERROR) // 监听react组件错误
     monitor.pluginCall('reject_error', REJECT_ERROR) // 监听异步错误
     monitor.pluginCall('count', COUNT)// 监听统计
-    if (Router) {
-      monitor.pluginCall('routerChange', createRouterMonitor(Router))// 监听路由改变
+    if (React && useHistory) {
+      monitor.pluginCall('routerChange', createRouterMonitor({ React, useHistory }))// 监听路由改变
+    }
+    if (useLocation) {
+      if (mergeConfig.pagePerformance?.open) {
+        monitor.pluginCall('pagePerformance', createPerformanceObserve(mergeConfig.pagePerformance.entryTypes, useLocation))// 监听页面性能
+      }
     }
     if (mergeConfig.ajax?.open) {
       monitor.pluginCall('ajax', AJAX) // 监听ajax请求
