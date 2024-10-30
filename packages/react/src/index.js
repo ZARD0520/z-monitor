@@ -4,7 +4,7 @@ import { usePlatform } from './platform'
 
 const defaultConfig = {
   platform: 'react', // 监听的平台，默认为React
-  key: 'z-monitor-' + Date.now().toString() // 唯一key
+  key: 'z-app' // 唯一key
 }
 
 export default function createMonitor(config = defaultConfig, pluginConfig = defaultPluginConfig, React, { useHistory, useLocation }) {
