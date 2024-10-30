@@ -1,7 +1,7 @@
 import { register, ERROR, createRouterMonitor } from './react'
 import { Plugin } from '@libc/core'
 
-function createPerformanceObserve(entryTypes, useLocation) {
+function createPerformanceObserve(entryTypes, React, useLocation) {
   return class extends Plugin {
     init() {
       if (!useHistory) {
@@ -13,7 +13,7 @@ function createPerformanceObserve(entryTypes, useLocation) {
 
       const location = useLocation();
 
-      useEffect(() => {
+      React.useEffect(() => {
         const observer = new PerformanceObserver((list) => {
           for (const entry of list.getEntries()) {
             this.send(

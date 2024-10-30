@@ -31,9 +31,9 @@ export default function createMonitor(config = defaultConfig, pluginConfig = def
     if (React && useHistory) {
       monitor.pluginCall('routerChange', createRouterMonitor({ React, useHistory }))// 监听路由改变
     }
-    if (useLocation) {
+    if (React && useLocation) {
       if (mergeConfig.pagePerformance?.open) {
-        monitor.pluginCall('pagePerformance', createPerformanceObserve(mergeConfig.pagePerformance.entryTypes, useLocation))// 监听页面性能
+        monitor.pluginCall('pagePerformance', createPerformanceObserve(mergeConfig.pagePerformance.entryTypes, React, useLocation))// 监听页面性能
       }
     }
     if (mergeConfig.ajax?.open) {
