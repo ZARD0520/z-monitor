@@ -26,6 +26,5 @@
     * 在ErrorHanding内部就可以放置项目代码了
 
 <!-- TO DO LIST -->
-* 增加source map上传处理场景
 * 增加cli脚手架
 * 修bug(一切功能还没落地使用过，纯盲打)
