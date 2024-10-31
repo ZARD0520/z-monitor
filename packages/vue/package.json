@@ -1,9 +1,12 @@
 {
   "name": "@libc/vue",
   "version": "1.0.0",
-  "description": "",
+  "description": "z-monitor vue lib",
   "main": "dist/index.js",
   "type": "module",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1"
