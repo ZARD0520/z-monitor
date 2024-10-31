@@ -7,7 +7,7 @@ const defaultConfig = {
   key: 'z-app' // 唯一key
 }
 
-export default function createMonitor(config = defaultConfig, pluginConfig = defaultPluginConfig, React, { useHistory, useLocation }) {
+export default function createMonitor(React, { useHistory, useLocation }, config = defaultConfig, pluginConfig = defaultPluginConfig) {
   try {
     const { register, ERROR: REACT_ERROR, createRouterMonitor, createPerformanceObserve } = usePlatform(config.platform)
     const mergeConfig = {
