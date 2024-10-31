@@ -1,4 +1,4 @@
-import { isFalse } from '../utils'
+import { isFalse } from '../utils/index'
 
 const config = {
   url: '',

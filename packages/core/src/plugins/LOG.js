@@ -1,5 +1,5 @@
-import { EMIT_ERROR } from "../constant"
-import { isFalse } from "../utils"
+import { EMIT_ERROR } from "../constant/index"
+import { isFalse } from "../utils/index"
 
 export default class LOG {
   constructor({ mt, options: allOptions }) {

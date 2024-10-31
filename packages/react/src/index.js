@@ -1,6 +1,6 @@
 import { defaultPluginConfig, Monitor } from '@libc/core'
 import { CLICK, ERROR, REJECT_ERROR, COUNT, AJAX, VIDEO_RECORD, USERINFO } from '@libc/core/plugins'
-import { usePlatform } from './platform'
+import { usePlatform } from './platform/index'
 
 const defaultConfig = {
   platform: 'react', // 监听的平台，默认为React

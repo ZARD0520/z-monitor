@@ -1,6 +1,6 @@
-import { getObj, getObjType, hasValue, reLog, isFalse } from './utils'
-import { LEVELS, TYPES, EMIT_ERROR } from './constant'
-import { LOG, HTTP } from './plugins'
+import { getObj, getObjType, hasValue, reLog, isFalse } from './utils/index'
+import { LEVELS, TYPES, EMIT_ERROR } from './constant/index'
+import Plugins from './plugins/index'
 
 export const defaultPluginConfig = {
   ajax: {
@@ -87,9 +87,9 @@ export class Monitor {
   }
   initClass() {
     // 注册日志插件
-    this.pluginCall('log', LOG);
+    this.pluginCall('log', Plugins.LOG);
     // 注册 http 插件
-    this.pluginCall('http', HTTP);
+    this.pluginCall('http', Plugins.HTTP);
   }
   // 判断该插件是否是内部插件
   isInnerPlugins(name) {

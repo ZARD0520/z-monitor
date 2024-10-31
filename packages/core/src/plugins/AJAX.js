@@ -1,4 +1,4 @@
-import { Plugin } from '../core/monitor.js';
+import { Plugin } from '../index';
 
 export default class AJAX extends Plugin {
   init(options = {}) {
