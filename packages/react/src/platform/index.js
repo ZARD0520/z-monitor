@@ -4,7 +4,7 @@ import { Plugin } from '@libc/core'
 function createPerformanceObserve(entryTypes, React, useLocation) {
   return class extends Plugin {
     init() {
-      if (!useHistory) {
+      if (!useLocation) {
         return console.error('缺少路由相关参数')
       }
       if (!entryTypes?.length) {
