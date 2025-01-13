@@ -1,15 +1,15 @@
 import { defaultPluginConfig, Monitor } from '@libc/core'
 import { CLICK, ERROR, REJECT_ERROR, COUNT, AJAX, VIDEO_RECORD, USERINFO } from '@libc/core/plugins'
-import { usePlatform } from './platform'
+import { usePlatform } from './platform/index'
 
 const defaultConfig = {
   platform: 'react', // 监听的平台，默认为React
-  key: 'z-monitor-' + Date.now().toString() // 唯一key
+  key: 'z-app' // 唯一key
 }
 
-export default function createMonitor(config = defaultConfig, pluginConfig = defaultPluginConfig, React, Router) {
+export default function createMonitor(React, { useHistory, useLocation }, config = defaultConfig, pluginConfig = defaultPluginConfig) {
   try {
-    const { register, ERROR: REACT_ERROR, createRouterMonitor } = usePlatform(config.platform)
+    const { register, ERROR: REACT_ERROR, createRouterMonitor, createPerformanceObserve } = usePlatform(config.platform)
     const mergeConfig = {
       key: config.key,
       plugins: {}
@@ -28,8 +28,13 @@ export default function createMonitor(config = defaultConfig, pluginConfig = def
     monitor.pluginCall('platform_error', REACT_ERROR) // 监听react组件错误
     monitor.pluginCall('reject_error', REJECT_ERROR) // 监听异步错误
     monitor.pluginCall('count', COUNT)// 监听统计
-    if (Router) {
-      monitor.pluginCall('routerChange', createRouterMonitor(Router))// 监听路由改变
+    if (React && useHistory) {
+      monitor.pluginCall('routerChange', createRouterMonitor({ React, useHistory }))// 监听路由改变
+    }
+    if (React && useLocation) {
+      if (mergeConfig.pagePerformance?.open) {
+        monitor.pluginCall('pagePerformance', createPerformanceObserve(mergeConfig.pagePerformance.entryTypes, React, useLocation))// 监听页面性能
+      }
     }
     if (mergeConfig.ajax?.open) {
       monitor.pluginCall('ajax', AJAX) // 监听ajax请求

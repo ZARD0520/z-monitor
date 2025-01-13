@@ -1,5 +1,5 @@
-import { EMIT_ERROR } from "../constant"
-import { isFalse } from "../utils"
+import { EMIT_ERROR } from "../constant/index"
+import { isFalse } from "../utils/index"
 
 export default class LOG {
   constructor({ mt, options: allOptions }) {
@@ -24,9 +24,26 @@ export default class LOG {
     this.time = options.time || 60 * 1000;
     this.customMethod = options.customMethod || null;
     this.MAX_HTTP_FAIL = options.MAX_HTTP_FAIL || 20;
+    this.data = getNotUploadedData()
+    listenUnload()
     if (this.type === 'time') {
       this.openInterval();
     }
+  }
+  getNotUploadedData() {
+    const saveDataStr = localStorage.getItem(`monitor_not_uploaded_${this.mt.appName}`)
+    if (saveDataStr) {
+      this.data = JSON.parse(saveDataStr)
+      localStorage.removeItem(`monitor_not_uploaded_${this.mt.appName}`)
+    }
+  }
+  listenUnload() {
+    window.addEventListener('beforeunload', () => {
+      if (this.data?.length) {
+        const saveData = JSON.stringify(this.data)
+        localStorage.setItem(`monitor_not_uploaded_${this.mt.appName}`, saveData)
+      }
+    })
   }
   openInterval() {
     this.cancelInterval();

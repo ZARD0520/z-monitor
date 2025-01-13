@@ -87,7 +87,7 @@ export class ERROR extends Plugin {
 
 export function createRouterMonitor({
   React,
-  useNavigate
+  useHistory
 }) {
   return class extends Plugin {
     init() {
@@ -95,7 +95,7 @@ export function createRouterMonitor({
       if (!isReact) {
         return console.error('检测当前不是react app环境，必须调用register(React)(monitor)注册');
       }
-      if (!React || !useNavigate) {
+      if (!React || !useHistory) {
         return console.error('React或路由相关hooks未传入，请先传入相关参数')
       }
       console.log('React Router change');
@@ -104,7 +104,7 @@ export function createRouterMonitor({
         value: 'ROUTER.CHANGE',
       });
 
-      const navigate = useNavigate()
+      const history = useHistory()
 
       const sendRouteChange = (to, from) => {
         if (!this.isClose) {
@@ -121,11 +121,11 @@ export function createRouterMonitor({
       }
 
       React.useEffect(() => {
-        const unlisten = navigate((to, { state: { from } }) => {
-          sendRouteChange(to, from)
+        const unlisten = history.listen((location, action) => {
+          sendRouteChange(location.pathname, history.location.pathname)
         })
         return () => unlisten()
-      }, [navigate])
+      }, [history])
     }
   }
 }

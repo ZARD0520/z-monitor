@@ -1,13 +1,13 @@
 import { defaultPluginConfig, Monitor } from '@libc/core'
 import { CLICK, ERROR, REJECT_ERROR, COUNT, AJAX, VIDEO_RECORD, USERINFO } from '@libc/core/plugins'
-import { usePlatform } from './platform'
+import { usePlatform } from './platform/index'
 
 const defaultConfig = {
   platform: 'vue2', // 监听的平台，默认为Vue2
-  key: 'z-monitor-' + Date.now().toString() // 唯一key
+  key: 'z-app' // 唯一key
 }
 
-export default function createMonitor(config = defaultConfig, pluginConfig = defaultPluginConfig, Vue, Router) {
+export default function createMonitor(Vue, Router, config = defaultConfig, pluginConfig = defaultPluginConfig) {
   try {
     const { register, ERROR: VUE_ERROR, createRouterMonitor, createPerformanceObserve } = usePlatform(config.platform)
     const mergeConfig = {
