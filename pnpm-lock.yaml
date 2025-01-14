@@ -8,12 +8,12 @@ importers:
 
   .:
     dependencies:
-      '@libc/core':
-        specifier: workspace:^
-        version: link:packages/core
       rrweb:
         specifier: 2.0.0-alpha.4
         version: 2.0.0-alpha.4
+      z-monitor-core:
+        specifier: workspace:^
+        version: link:packages/core
     devDependencies:
       '@babel/core':
         specifier: ^7.25.8
@@ -40,9 +40,17 @@ importers:
   packages/core: {}
 
   packages/react:
+    dependencies:
+      z-monitor-core:
+        specifier: workspace:^
+        version: link:../core
     publishDirectory: dist
 
   packages/vue:
+    dependencies:
+      z-monitor-core:
+        specifier: workspace:^
+        version: link:../core
     publishDirectory: dist
 
 packages:
