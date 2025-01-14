@@ -4,6 +4,7 @@
   "private": true,
   "description": "z-monitor core lib",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "files": [
     "dist"

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "z-monitor vue lib",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "files": [
     "dist"
