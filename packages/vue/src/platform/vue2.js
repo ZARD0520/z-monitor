@@ -1,4 +1,4 @@
-import { Plugin } from '@libc/core'
+import { Plugin } from 'core'
 
 export function register(Vue) {
   return function (mt, plugins = null) {

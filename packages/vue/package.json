@@ -9,7 +9,12 @@
   ],
   "scripts": {
     "build": "rollup -c",
+    "prepublishOnly": "pnpm -F core run build && npm run build",
+    "publish":"npm run publish",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "core": "workspace:*"
   },
   "keywords": [],
   "author": "",

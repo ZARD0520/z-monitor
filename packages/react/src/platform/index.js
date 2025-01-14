@@ -1,5 +1,5 @@
 import { register, ERROR, createRouterMonitor } from './react'
-import { Plugin } from '@libc/core'
+import { Plugin } from 'core'
 
 function createPerformanceObserve(entryTypes, React, useLocation) {
   return class extends Plugin {
