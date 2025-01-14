@@ -4,7 +4,7 @@ import { terser } from 'rollup-plugin-terser';
 export default {
   input: 'src/index.js',
   output: {
-    name: 'core',
+    name: 'z-monitor-core',
     file: 'dist/index.js',
     format: 'umd',
   },

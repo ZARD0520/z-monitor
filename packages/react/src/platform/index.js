@@ -1,5 +1,5 @@
 import { register, ERROR, createRouterMonitor } from './react'
-import { Plugin } from 'core'
+import { Plugin } from 'z-monitor-core'
 
 function createPerformanceObserve(entryTypes, React, useLocation) {
   return class extends Plugin {

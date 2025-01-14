@@ -1,5 +1,5 @@
 {
-  "name": "@libc/core",
+  "name": "z-monitor-core",
   "version": "1.0.0",
   "private": true,
   "description": "z-monitor core lib",

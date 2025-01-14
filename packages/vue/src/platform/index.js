@@ -1,6 +1,6 @@
 import { register as registerVue2, ERROR as ErrorVue2, createRouterMonitor as createRouterMonitorVue2 } from './vue2'
 import { register as registerVue3, ERROR as ErrorVue3, createRouterMonitor as createRouterMonitorVue3 } from './vue3'
-import { Plugin } from 'core'
+import { Plugin } from 'z-monitor-core'
 
 function createPerformanceObserve(entryTypes, router) {
   return class extends Plugin {

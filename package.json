@@ -17,7 +17,7 @@
   "author": "zard",
   "license": "ISC",
   "dependencies": {
-    "@libc/core": "workspace:^",
+    "z-monitor-core": "workspace:^",
     "rrweb": "2.0.0-alpha.4"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
 {
-  "name": "@libc/vue",
+  "name": "z-monitor-vue",
   "version": "1.0.0",
   "description": "z-monitor vue lib",
   "main": "dist/index.js",
@@ -14,7 +14,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "core": "workspace:*"
+    "z-monitor-core": "workspace:^"
   },
   "keywords": [],
   "author": "",

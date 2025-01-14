@@ -1,4 +1,4 @@
-import { Plugin } from 'core'
+import { Plugin } from 'z-monitor-core'
 
 export function register(Vue) {
   return function (mt, plugins = null) {
