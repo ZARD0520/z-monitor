@@ -17,6 +17,6 @@
   "author": "",
   "license": "ISC",
   "publishConfig": {
-    "directory": "dist"
+    "access": "public"
   }
 }
