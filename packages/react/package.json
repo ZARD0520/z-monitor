@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "rollup -c",
-    "prepublishOnly": "pnpm -F core run build && npm run build",
+    "prepublishOnly": "pnpm -F z-monitor-core run build && npm run build",
     "publish":"npm run publish",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

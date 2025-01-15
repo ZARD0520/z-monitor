@@ -1,4 +1,4 @@
-import { Plugin } from '../index';
+import { Plugin } from '../plugin';
 
 export default class AJAX extends Plugin {
   init(options = {}) {

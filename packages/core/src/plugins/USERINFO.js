@@ -1,4 +1,4 @@
-import { Plugin } from '../index.js';
+import { Plugin } from '../plugin.js';
 
 export default class USERINFO extends Plugin {
   init(options) {

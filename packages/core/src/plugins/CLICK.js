@@ -1,5 +1,5 @@
 import { getCurHtml, getPath, isNormalTag, AttrContent } from '../utils/index.js';
-import { Plugin } from '../index.js';
+import { Plugin } from '../plugin.js';
 import { EMIT_ERROR } from '../constant/index.js';
 
 export default class CLICK extends Plugin {

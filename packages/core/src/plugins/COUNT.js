@@ -1,4 +1,4 @@
-import { Plugin } from '../index.js';
+import { Plugin } from '../plugin.js';
 
 export default class COUNT extends Plugin {
   init() {

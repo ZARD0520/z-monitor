@@ -5,12 +5,12 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build:core": "pnpm -F core run build",
-    "build:vue": "pnpm -F vue run build",
-    "build:react": "pnpm -F react run build",
+    "build:core": "pnpm -F z-monitor-core run build",
+    "build:vue": "pnpm -F z-monitor-vue run build",
+    "build:react": "pnpm -F z-monitor-react run build",
     "build": "pnpm recursive run build",
-    "publish:vue": "pnpm -F vue publish",
-    "publish:react": "pnpm -F react publish",
+    "publish:vue": "pnpm -F z-monitor-vue publish",
+    "publish:react": "pnpm -F z-monitor-react publish",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

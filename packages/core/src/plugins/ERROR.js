@@ -1,4 +1,4 @@
-import { Plugin } from '../index.js';
+import { Plugin } from '../plugin.js';
 
 export default class ERROR extends Plugin {
   init(options) {

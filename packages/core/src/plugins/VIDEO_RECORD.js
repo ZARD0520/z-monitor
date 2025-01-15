@@ -1,4 +1,4 @@
-import { Plugin } from '../index.js';
+import { Plugin } from '../plugin.js';
 const rrweb = require('rrweb');
 
 export default class VIDEO_RECORD extends Plugin {
