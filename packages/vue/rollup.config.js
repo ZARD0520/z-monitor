@@ -11,12 +11,12 @@ export default {
     format: 'esm',
   },
   plugins: [
-    resolve(),
-    commonjs(),
     babel({
       exclude: 'node_modules/**', // 排除 node_modules
       babelHelpers: 'bundled'
     }),
+    resolve(),
+    commonjs(),
     terser(), // 代码混淆插件
   ]
 }
