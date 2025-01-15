@@ -5,9 +5,6 @@
   "description": "z-monitor core lib",
   "main": "dist/index.js",
   "type": "module",
-  "files": [
-    "dist/*"
-  ],
   "scripts": {
     "build": "rollup -c",
     "publish":"npm publish",
@@ -15,8 +12,5 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "publishConfig": {
-    "access": "public"
-  }
+  "license": "ISC"
 }

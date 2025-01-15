@@ -9,7 +9,6 @@
     "build:vue": "pnpm -F z-monitor-vue run build",
     "build:react": "pnpm -F z-monitor-react run build",
     "build": "pnpm -R run build",
-    "publish:core": "pnpm -F z-monitor-core publish",
     "publish:vue": "pnpm -F z-monitor-vue publish",
     "publish:react": "pnpm -F z-monitor-react publish",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,6 +17,8 @@
   "author": "zard",
   "license": "ISC",
   "dependencies": {
+    "@rollup/plugin-commonjs": "^28.0.2",
+    "@rollup/plugin-node-resolve": "^16.0.0",
     "rrweb": "2.0.0-alpha.4"
   },
   "devDependencies": {
