@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "type": "module",
   "files": [
-    "dist"
+    "dist/*"
   ],
   "scripts": {
     "build": "rollup -c",

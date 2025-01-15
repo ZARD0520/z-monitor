@@ -8,7 +8,7 @@
     "build:core": "pnpm -F z-monitor-core run build",
     "build:vue": "pnpm -F z-monitor-vue run build",
     "build:react": "pnpm -F z-monitor-react run build",
-    "build": "pnpm recursive run build",
+    "build": "pnpm -R run build",
     "publish:core": "pnpm -F z-monitor-core publish",
     "publish:vue": "pnpm -F z-monitor-vue publish",
     "publish:react": "pnpm -F z-monitor-react publish",
