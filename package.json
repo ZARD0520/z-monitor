@@ -9,6 +9,7 @@
     "build:vue": "pnpm -F z-monitor-vue run build",
     "build:react": "pnpm -F z-monitor-react run build",
     "build": "pnpm recursive run build",
+    "publish:core": "pnpm -F z-monitor-core publish",
     "publish:vue": "pnpm -F z-monitor-vue publish",
     "publish:react": "pnpm -F z-monitor-react publish",
     "test": "echo \"Error: no test specified\" && exit 1"

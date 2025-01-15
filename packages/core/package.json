@@ -5,11 +5,19 @@
   "description": "z-monitor core lib",
   "main": "dist/index.js",
   "type": "module",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "rollup -c",
+    "prepublishOnly": "npm run build",
+    "publish":"npm publish",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "publishConfig": {
+    "directory": "dist"
+  }
 }

@@ -14,5 +14,5 @@ export default {
       babelHelpers: 'bundled',
     }),
     terser(), // 代码混淆插件
-  ],
+  ]
 }

@@ -11,9 +11,6 @@ importers:
       rrweb:
         specifier: 2.0.0-alpha.4
         version: 2.0.0-alpha.4
-      z-monitor-core:
-        specifier: workspace:^
-        version: link:packages/core
     devDependencies:
       '@babel/core':
         specifier: ^7.25.8
@@ -37,20 +34,21 @@ importers:
         specifier: ^5.36.0
         version: 5.36.0
 
-  packages/core: {}
+  packages/core:
+    publishDirectory: dist
 
   packages/react:
     dependencies:
       z-monitor-core:
         specifier: workspace:^
-        version: link:../core
+        version: link:../core/dist
     publishDirectory: dist
 
   packages/vue:
     dependencies:
       z-monitor-core:
         specifier: workspace:^
-        version: link:../core
+        version: link:../core/dist
     publishDirectory: dist
 
 packages:
