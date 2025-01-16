@@ -1,12 +1,16 @@
 import babel from '@rollup/plugin-babel';
 import { terser } from 'rollup-plugin-terser';
-
+/**
+ *  @type { import ("rollup").RollupOptions }
+ * */
 export default {
   input: 'src/index.js',
   output: {
     name: 'core',
-    file: 'dist/index.js',
+    dir: 'dist',
     format: 'esm',
+    preserveModules: true,
+    preserveModulesRoot: 'src'
   },
   plugins: [
     babel({
