@@ -1,6 +1,6 @@
 import { defaultPluginConfig, Monitor } from 'z-monitor-core'
-import { CLICK, ERROR, REJECT_ERROR, COUNT, AJAX, VIDEO_RECORD, USERINFO } from 'z-monitor-core/plugins'
 import { usePlatform } from './platform/index'
+import Plugins from 'z-monitor-core/plugins'
 
 const defaultConfig = {
   platform: 'vue2', // 监听的平台，默认为Vue2
@@ -23,11 +23,11 @@ export default function createMonitor(Vue, Router, config = defaultConfig, plugi
     // 注册平台监控
     register(Vue)(monitor)
     // 注册插件
-    monitor.pluginCall('click', CLICK) // 监听点击
-    monitor.pluginCall('ERROR', ERROR) // 监听全局错误
+    monitor.pluginCall('click', Plugins.CLICK) // 监听点击
+    monitor.pluginCall('ERROR', Plugins.ERROR) // 监听全局错误
     monitor.pluginCall('platform_error', VUE_ERROR) // 监听vue组件错误
-    monitor.pluginCall('reject_error', REJECT_ERROR) // 监听异步错误
-    monitor.pluginCall('count', COUNT)// 监听统计
+    monitor.pluginCall('reject_error', Plugins.REJECT_ERROR) // 监听异步错误
+    monitor.pluginCall('count', Plugins.COUNT)// 监听统计
     if (Router) {
       monitor.pluginCall('routerChange', createRouterMonitor(Router))// 监听路由改变
       if (mergeConfig.pagePerformance?.open) {
@@ -35,13 +35,13 @@ export default function createMonitor(Vue, Router, config = defaultConfig, plugi
       }
     }
     if (mergeConfig.ajax?.open) {
-      monitor.pluginCall('ajax', AJAX) // 监听ajax请求
+      monitor.pluginCall('ajax', Plugins.AJAX) // 监听ajax请求
     }
     if (mergeConfig.videoRecord?.open) {
-      monitor.pluginCall('videoRecord', VIDEO_RECORD) // 错误录制
+      monitor.pluginCall('videoRecord', Plugins.VIDEO_RECORD) // 错误录制
     }
     if (mergeConfig.userInfo?.open) {
-      monitor.pluginCall('userInfo', USERINFO) // 用户信息
+      monitor.pluginCall('userInfo', Plugins.USERINFO) // 用户信息
     }
   } catch (e) {
     console.error(e, 'monitor错误')
