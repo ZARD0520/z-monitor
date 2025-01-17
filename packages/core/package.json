@@ -15,10 +15,10 @@
   "license": "ISC",
   "exports": {
     ".": {
-      "import": "./dist/index.js"
+      "import": "./src/index.js"
     },
     "./plugins": {
-      "import": "./dist/plugins/index.js"
+      "import": "./src/plugins/index.js"
     }
   }
 }
