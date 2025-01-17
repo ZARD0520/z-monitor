@@ -8,7 +8,7 @@ import HTTP from './HTTP.js'
 import LOG from './LOG.js'
 import VIDEO_RECORD from './VIDEO_RECORD.js'
 
-export default {
+export {
   CLICK,
   ERROR,
   REJECT_ERROR,

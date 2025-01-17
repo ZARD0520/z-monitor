@@ -1,5 +1,5 @@
 import { Plugin } from '../plugin.js';
-import rrweb from 'rrweb'
+import * as rrweb from 'rrweb'
 
 export default class VIDEO_RECORD extends Plugin {
   init(options) {
