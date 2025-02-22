@@ -10,7 +10,7 @@ export function register(Vue) {
     }
     mt.platformName = 'vue2'
     mt.platform = Vue
-    window.$mt = Vue.prototype.$mt = mt
+    Vue.prototype.$mt = mt
     if (plugins) {
       for (let i in plugins) {
         if (!plugins[i]) {
