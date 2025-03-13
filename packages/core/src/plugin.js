@@ -1,3 +1,4 @@
+import { isFalse } from "./utils";
 export class Plugin {
   constructor({ mt, name }, options) {
     // monitor 实例
