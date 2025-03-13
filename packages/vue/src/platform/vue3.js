@@ -10,7 +10,7 @@ export function register(Vue) {
     }
     mt.platformName = 'vue3'
     mt.platform = Vue
-    window.$mt = Vue.config.globalProperties.mt = mt
+    Vue.config.globalProperties.mt = mt
     if (plugins) {
       for (let i in plugins) {
         if (!plugins[i]) {

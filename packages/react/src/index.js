@@ -23,7 +23,7 @@ export default function createMonitor(React, { useHistory, useLocation }, config
       plugins: {}
     }
     Object.keys(pluginConfig).forEach((plugin) => {
-      if (plugin.open) {
+      if (pluginConfig[plugin].open) {
         mergeConfig.plugins[plugin] = pluginConfig[plugin]
       }
     })
