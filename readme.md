@@ -26,8 +26,8 @@
     * 在ErrorHanding内部就可以放置项目代码了
 
 <!-- TO DO LIST -->
-* sessionId、项目标识projectId
-* 时区、语言、设备信息、地理信息
+* 参数补充sessionId、项目标识projectId
+* 获取时区、语言、设备信息、地理信息
 * 校验必传参数
 * 简化参数、合并配置
 * 修bug(一切功能还没落地使用过，纯盲打)

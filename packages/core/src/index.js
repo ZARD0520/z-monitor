@@ -23,7 +23,6 @@ export const defaultPluginConfig = {
     open: true,
     isCustomRequest: false,
     requestConfig: {
-      url: '', // 请求地址
       method: '', // 请求类型：POST、GET等
       headers: {}, // 请求头配置
     },
@@ -65,12 +64,18 @@ export class Monitor {
     this.platform = null;
     // 平台名字
     this.platformName = null;
+    // 会话ID
+    this.sessionId = null;
+    // 重试计数器
+    this.retryCount = 0;
+    // 最大重试次数
+    this.MAX_RETRY_COUNT = 3;
     // 上传预处理
     this.beforeReport = options.beforeReport || null;
     // 初始化选项
     this.init(options);
   }
-  init(options) {
+  async init(options) {
     console.log('Monitor init');
     // 初始化全局需要的数据
     this.initGlobal();
@@ -78,6 +83,47 @@ export class Monitor {
     this.initOptions(options);
     // 初始化class
     this.initClass(options);
+
+    // 初始化 sessionId
+    try {
+      await this.initSessionId(options);
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+  // 初始化sessionId
+  async initSessionId(options) {
+    try {
+      // 使用 HTTP 插件发送请求
+      const response = await this.plugins.http.request({
+        url: (options.url || '110.41.131.208') + '/api/session/id', // 替换为实际的 API 地址
+        method: 'GET',
+      });
+
+      // 检查响应是否有效
+      if (response && response.sessionId) {
+        this.sessionId = response.sessionId;
+        console.log('SessionId 初始化成功:', this.sessionId);
+      } else {
+        throw new Error('无效的响应数据');
+      }
+    } catch (error) {
+      // 请求失败，递增重试计数器
+      this.retryCount++;
+      console.error(`SessionId 初始化失败，重试次数: ${this.retryCount}`, error);
+
+      // 如果重试次数未达到最大值，则继续重试
+      if (this.retryCount < this.MAX_RETRY_COUNT) {
+        console.log('重试中...');
+        await this.initSessionId(); // 递归调用
+      } else {
+        // 重试次数达到最大值，关闭埋点功能
+        console.error('重试次数达到上限，关闭埋点功能');
+        this.close(); // 关闭埋点
+        this.emit('error', EMIT_ERROR.SESSION_FAILED);
+        throw new Error('初始失败：无法获取 sessionId');
+      }
+    }
   }
   // 初始化全局需要的数据
   initGlobal() {

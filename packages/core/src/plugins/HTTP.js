@@ -16,7 +16,7 @@ export default class HTTP {
     if (!options.requestConfig.url && !options.customMethod) {
       console.error('url is required');
     }
-    this.url = options.requestConfig.url || config.url;
+    this.url = (options.url || config.url) + '/api/monitor/add';
     this.method = options.requestConfig.method || config.method;
     this.headers = options.requestConfig.headers || config.headers;
     this.customMethod = options.customMethod || null;
@@ -56,11 +56,7 @@ export default class HTTP {
     xhr.onreadystatechange = function () {
       // 这步为判断服务器是否正确响应
       if (xhr.readyState == 4) {
-        if (xhr.status == 200) {
-          done(true);
-        } else {
-          done(false);
-        }
+        done(xhr);
       }
     };
   }

@@ -1,16 +1,17 @@
 import { defaultPluginConfig, Monitor } from 'z-monitor-core'
 import { usePlatform } from './platform/index'
-import { 
+import {
   CLICK,
   ERROR,
   REJECT_ERROR,
   AJAX,
   USERINFO,
   COUNT,
-  VIDEO_RECORD 
+  VIDEO_RECORD
 } from 'z-monitor-core/plugins'
 
 const defaultConfig = {
+  url: '110.41.131.208',
   platform: 'react', // 监听的平台，默认为React
   key: 'z-app' // 唯一key
 }
@@ -19,6 +20,7 @@ export default function createMonitor(React, { useHistory, useLocation }, config
   try {
     const { register, ERROR: REACT_ERROR, createRouterMonitor, createPerformanceObserve } = usePlatform(config.platform)
     const mergeConfig = {
+      url: config.url,
       key: config.key,
       plugins: {}
     }

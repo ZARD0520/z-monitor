@@ -14,6 +14,7 @@ export default {
   install(Vue, options = {
     key: 'z-app',
     platform: 'vue2',
+    url: '110.41.131.208',
     pluginConfig: defaultPluginConfig,
     Router: null
   }) {
@@ -21,6 +22,7 @@ export default {
       const { register, ERROR: VUE_ERROR, createRouterMonitor, createPerformanceObserve } = usePlatform(options.platform)
       const mergeConfig = {
         key: options.key,
+        url: options.url,
         plugins: {}
       }
       Object.keys(options.pluginConfig).forEach((plugin) => {
