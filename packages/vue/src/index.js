@@ -15,6 +15,7 @@ export default {
     key: 'z-app',
     platform: 'vue2',
     url: '110.41.131.208',
+    trackList: ['userInfo'],
     pluginConfig: null,
     Router: null
   }) {
@@ -26,8 +27,9 @@ export default {
         plugins: {}
       }
       const mergePluginConfig = Object.assign(defaultPluginConfig, options.pluginConfig)
+      const pluginList = ['ajax', 'log', 'http', ...config.trackList]
       Object.keys(mergePluginConfig).forEach((plugin) => {
-        if (mergePluginConfig[plugin].open) {
+        if (pluginList.includes(plugin)) {
           mergeConfig.plugins[plugin] = mergePluginConfig[plugin]
         }
       })

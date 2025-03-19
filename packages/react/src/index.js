@@ -13,7 +13,8 @@ import {
 const defaultConfig = {
   url: '110.41.131.208',
   platform: 'react', // 监听的平台，默认为React
-  key: 'z-app' // 唯一key
+  key: 'z-app', // 唯一key
+  trackList: ['userInfo']
 }
 
 export default function createMonitor(React, { useHistory, useLocation }, config = defaultConfig, pluginConfig) {
@@ -25,8 +26,9 @@ export default function createMonitor(React, { useHistory, useLocation }, config
       plugins: {}
     }
     const mergePluginConfig = Object.assign(defaultPluginConfig, pluginConfig)
+    const pluginList = ['ajax', 'log', 'http', ...config.trackList]
     Object.keys(mergePluginConfig).forEach((plugin) => {
-      if (mergePluginConfig[plugin].open) {
+      if (pluginList.includes(plugin)) {
         mergeConfig.plugins[plugin] = mergePluginConfig[plugin]
       }
     })
