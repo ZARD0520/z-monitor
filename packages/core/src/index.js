@@ -64,6 +64,8 @@ export class Monitor {
     this.retryCount = 0;
     // 最大重试次数
     this.MAX_RETRY_COUNT = 3;
+    // 基础信息
+    this.baseInfo = null
     // 上传预处理
     this.beforeReport = options.beforeReport || null;
     // 初始化选项
@@ -73,11 +75,12 @@ export class Monitor {
     console.log('Monitor init');
     // 初始化全局需要的数据
     this.initGlobal();
+    // 初始化基础数据
+    this.initBaseInfo()
     // 初始化选项
     this.initOptions(options);
     // 初始化class
     this.initClass(options);
-
     // 初始化 sessionId
     try {
       await this.initSessionId(options);
@@ -127,6 +130,34 @@ export class Monitor {
   // 初始化选项
   initOptions(options) {
     this.appName = this.key + '-Monitor';
+  }
+  // 初始化基础信息
+  initBaseInfo() {
+    const timeZoneOffset = new Date().getTimezoneOffset()
+    const offsetHours = Math.floor(Math.abs(timeZoneOffset) / 60)
+    const offsetDirection = timeZoneOffset > 0 ? "-" : "+"
+    const timezone = offsetDirection + offsetHours
+    this.baseInfo = {
+      timezone,
+      language: navigator.language || navigator.userLanguage ||'en',
+      deviceInfo: {
+        userAgent: navigator.userAgent,
+        networkInfo: navigator.connection || navigator.mozConnection || navigator.webkitConnection
+      },
+      locationInfo: {}
+    }
+    navigator.geolocation?.getCurrentPosition(
+      (position) => {
+        geoInfo = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        };
+        this.baseInfo.locationInfo = geoInfo
+      },
+      (error) => {
+        console.error('Failed to get geolocation:', error);
+      }
+    );
   }
   initClass() {
     // 注册日志插件
@@ -192,11 +223,16 @@ export class Monitor {
     this.plugins.log.push(item);
   }
   getCommonConfig() {
+    this.initBaseInfo()
     let total = {
       time: window.Date.now(),
       info: {
         pageTitle: document.title,
         pageUrl: window.location.href,
+        timezone: this.baseInfo?.timezone,
+        language: this.baseInfo?.language,
+        deviceInfo: this.baseInfo?.deviceInfo || {},
+        locationInfo: this.baseInfo?.locationInfo || {}
       },
     };
     const len = this.commonParams.length;
