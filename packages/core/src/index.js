@@ -95,9 +95,9 @@ export class Monitor {
   async initSessionId(options) {
     try {
       // 使用 HTTP 插件发送请求
-      const response = await this.plugins.http.request({
-        url: (options.url || '110.41.131.208') + '/api/session/id', // 替换为实际的 API 地址
+      const response = await this.plugins.http.customRequest({
         method: 'GET',
+        url: (options.url || '110.41.131.208') + '/api/session/id'
       });
 
       // 检查响应是否有效
