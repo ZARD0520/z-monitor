@@ -15,7 +15,7 @@ export default {
     key: 'z-app',
     platform: 'vue2',
     url: '110.41.131.208',
-    pluginConfig: defaultPluginConfig,
+    pluginConfig: null,
     Router: null
   }) {
     try {
@@ -25,9 +25,10 @@ export default {
         url: options.url,
         plugins: {}
       }
-      Object.keys(options.pluginConfig).forEach((plugin) => {
-        if (options.pluginConfig[plugin].open) {
-          mergeConfig.plugins[plugin] = options.pluginConfig[plugin]
+      const mergePluginConfig = Object.assign(defaultPluginConfig, options.pluginConfig)
+      Object.keys(mergePluginConfig).forEach((plugin) => {
+        if (mergePluginConfig[plugin].open) {
+          mergeConfig.plugins[plugin] = mergePluginConfig[plugin]
         }
       })
       const monitor = new Monitor(mergeConfig)

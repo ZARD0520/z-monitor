@@ -16,7 +16,7 @@ const defaultConfig = {
   key: 'z-app' // 唯一key
 }
 
-export default function createMonitor(React, { useHistory, useLocation }, config = defaultConfig, pluginConfig = defaultPluginConfig) {
+export default function createMonitor(React, { useHistory, useLocation }, config = defaultConfig, pluginConfig) {
   try {
     const { register, ERROR: REACT_ERROR, createRouterMonitor, createPerformanceObserve } = usePlatform(config.platform)
     const mergeConfig = {
@@ -24,9 +24,10 @@ export default function createMonitor(React, { useHistory, useLocation }, config
       key: config.key,
       plugins: {}
     }
-    Object.keys(pluginConfig).forEach((plugin) => {
-      if (pluginConfig[plugin].open) {
-        mergeConfig.plugins[plugin] = pluginConfig[plugin]
+    const mergePluginConfig = Object.assign(defaultPluginConfig, pluginConfig)
+    Object.keys(mergePluginConfig).forEach((plugin) => {
+      if (mergePluginConfig[plugin].open) {
+        mergeConfig.plugins[plugin] = mergePluginConfig[plugin]
       }
     })
     const monitor = new Monitor(mergeConfig)
