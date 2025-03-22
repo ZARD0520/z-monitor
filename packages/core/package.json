@@ -19,6 +19,9 @@
     },
     "./plugins": {
       "import": "./src/plugins/index.js"
+    },
+    "./constant/config": {
+      "import": "./src/constant/config.js"
     }
   }
 }

@@ -4,6 +4,7 @@ import {
   HTTP,
   LOG,
 } from './plugins/index'
+import { DEFAULT_SESSION_URL } from './constant/config'
 
 export const defaultPluginConfig = {
   ajax: {
@@ -94,7 +95,7 @@ export class Monitor {
       // 使用 HTTP 插件发送请求
       const response = await this.plugins.http.customRequest({
         method: 'GET',
-        url: (options.url || '110.41.131.208') + '/api/session/id'
+        url: (options.url || DEFAULT_SESSION_URL) + '/api/session/id'
       });
 
       // 检查响应是否有效
@@ -112,7 +113,7 @@ export class Monitor {
       // 如果重试次数未达到最大值，则继续重试
       if (this.retryCount < this.MAX_RETRY_COUNT) {
         console.log('重试中...');
-        await this.initSessionId(); // 递归调用
+        await this.initSessionId(options); // 递归调用
       } else {
         // 重试次数达到最大值，关闭埋点功能
         console.error('重试次数达到上限，关闭埋点功能');
@@ -148,7 +149,7 @@ export class Monitor {
     }
     navigator.geolocation?.getCurrentPosition(
       (position) => {
-        geoInfo = {
+        const geoInfo = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
         };

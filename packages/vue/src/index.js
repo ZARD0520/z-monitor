@@ -9,16 +9,19 @@ import {
   COUNT,
   VIDEO_RECORD
 } from 'z-monitor-core/plugins'
+import { DEFAULT_TRACK_URL } from 'z-monitor-core/constant/config'
 
 export default {
-  install(Vue, options = {
-    key: 'z-app',
-    platform: 'vue2',
-    url: '110.41.131.208',
-    trackList: ['userInfo'],
-    pluginConfig: null,
-    Router: null
-  }) {
+  install(Vue, configs) {
+    const options = {
+      key: 'z-app',
+      platform: 'vue2',
+      url: DEFAULT_TRACK_URL,
+      trackList: ['userInfo'],
+      pluginConfig: null,
+      Router: null,
+      ...configs
+    }
     try {
       const { register, ERROR: VUE_ERROR, createRouterMonitor, createPerformanceObserve } = usePlatform(options.platform)
       const mergeConfig = {
@@ -26,8 +29,8 @@ export default {
         url: options.url,
         plugins: {}
       }
-      const mergePluginConfig = Object.assign(defaultPluginConfig, options.pluginConfig)
-      const pluginList = ['ajax', 'log', 'http', ...config.trackList]
+      const mergePluginConfig = Object.assign({}, defaultPluginConfig, options.pluginConfig)
+      const pluginList = ['ajax', 'log', 'http', ...options.trackList]
       Object.keys(mergePluginConfig).forEach((plugin) => {
         if (pluginList.includes(plugin)) {
           mergeConfig.plugins[plugin] = mergePluginConfig[plugin]
@@ -44,17 +47,17 @@ export default {
       monitor.pluginCall('count', COUNT)// 监听统计
       if (options.Router) {
         monitor.pluginCall('routerChange', createRouterMonitor(options.Router))// 监听路由改变
-        if (mergeConfig.pagePerformance?.open) {
+        if (mergeConfig.plugins.pagePerformance) {
           monitor.pluginCall('pagePerformance', createPerformanceObserve(mergeConfig.pagePerformance.entryTypes, options.Router))// 监听页面性能
         }
       }
-      if (mergeConfig.ajax?.open) {
+      if (mergeConfig.plugins.ajax) {
         monitor.pluginCall('ajax', AJAX) // 监听ajax请求
       }
-      if (mergeConfig.videoRecord?.open) {
+      if (mergeConfig.plugins.videoRecord) {
         monitor.pluginCall('videoRecord', VIDEO_RECORD) // 错误录制
       }
-      if (mergeConfig.userInfo?.open) {
+      if (mergeConfig.plugins.userInfo) {
         monitor.pluginCall('userInfo', USERINFO) // 用户信息
       }
     } catch (e) {

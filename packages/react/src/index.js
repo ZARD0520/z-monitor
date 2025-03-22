@@ -9,24 +9,25 @@ import {
   COUNT,
   VIDEO_RECORD
 } from 'z-monitor-core/plugins'
+import { DEFAULT_TRACK_URL } from 'z-monitor-core/constant/config'
 
-const defaultConfig = {
-  url: '110.41.131.208',
-  platform: 'react', // 监听的平台，默认为React
-  key: 'z-app', // 唯一key
-  trackList: ['userInfo']
-}
-
-export default function createMonitor(React, { useHistory, useLocation }, config = defaultConfig, pluginConfig) {
+export default function createMonitor(React, { useHistory, useLocation }, configs, pluginConfig) {
+  const options = {
+    url: DEFAULT_TRACK_URL,
+    platform: 'react', // 监听的平台，默认为React
+    key: 'z-app', // 唯一key
+    trackList: ['userInfo'],
+    ...configs
+  }
   try {
-    const { register, ERROR: REACT_ERROR, createRouterMonitor, createPerformanceObserve } = usePlatform(config.platform)
+    const { register, ERROR: REACT_ERROR, createRouterMonitor, createPerformanceObserve } = usePlatform(options.platform)
     const mergeConfig = {
-      url: config.url,
-      key: config.key,
+      url: options.url,
+      key: options.key,
       plugins: {}
     }
-    const mergePluginConfig = Object.assign(defaultPluginConfig, pluginConfig)
-    const pluginList = ['ajax', 'log', 'http', ...config.trackList]
+    const mergePluginConfig = Object.assign({}, defaultPluginConfig, pluginConfig)
+    const pluginList = ['ajax', 'log', 'http', ...options.trackList]
     Object.keys(mergePluginConfig).forEach((plugin) => {
       if (pluginList.includes(plugin)) {
         mergeConfig.plugins[plugin] = mergePluginConfig[plugin]
@@ -45,17 +46,17 @@ export default function createMonitor(React, { useHistory, useLocation }, config
       monitor.pluginCall('routerChange', createRouterMonitor({ React, useHistory }))// 监听路由改变
     }
     if (React && useLocation) {
-      if (mergeConfig.pagePerformance?.open) {
+      if (mergeConfig.plugins.pagePerformance) {
         monitor.pluginCall('pagePerformance', createPerformanceObserve(mergeConfig.pagePerformance.entryTypes, React, useLocation))// 监听页面性能
       }
     }
-    if (mergeConfig.ajax?.open) {
+    if (mergeConfig.plugins.ajax) {
       monitor.pluginCall('ajax', AJAX) // 监听ajax请求
     }
-    if (mergeConfig.videoRecord?.open) {
+    if (mergeConfig.plugins.videoRecord) {
       monitor.pluginCall('videoRecord', VIDEO_RECORD) // 错误录制
     }
-    if (mergeConfig.userInfo?.open) {
+    if (mergeConfig.plugins.userInfo) {
       monitor.pluginCall('userInfo', USERINFO) // 用户信息
     }
     return {
@@ -64,5 +65,6 @@ export default function createMonitor(React, { useHistory, useLocation }, config
     }
   } catch (e) {
     console.error(e, 'monitor错误')
+    return null
   }
 }
