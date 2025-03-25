@@ -90,7 +90,7 @@ export default function createMonitor(React, { useHistory, useLocation } = {}, c
   } catch (e) {
     console.error('[Z-Monitor] Initialization failed:', {
       error: e,
-      config: options,
+      config: { ...options, trackList: options.trackList },
       platform: options.platform
     })
     return null
