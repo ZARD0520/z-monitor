@@ -84,7 +84,7 @@ export default class LOG {
       // 因为在请求期间已经有新的日志过来，不能直接清空
       if (xhr.status === 200) {
         this.data = this.data.slice(currentLen, this.data.length);
-      } else if(xhr.status === 403){
+      } else if (xhr.status === 403) {
         this.mt.emit('error', EMIT_ERROR.SESSION_FAILED);
         // 重试获取 sessionId
         if (this.SESSION_RETRY_COUNT < this.MAX_SESSION_RETRY) {
