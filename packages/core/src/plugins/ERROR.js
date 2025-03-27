@@ -27,7 +27,7 @@ export default class ERROR extends Plugin {
     const { reason = {} } = event;
     const { message = null, stack = null } = reason;
     // 此处可优化-可根据event.target.tagName来判断错误来源的tag(视频？音频？图片？脚本？样式等)
-    const targetType = handleErrorType(event)
+    const targetType = this.handleErrorType(event)
     this.send({
       type: this.TYPES.CODE_ERROR,
       level: this.LEVELS.ERROR,

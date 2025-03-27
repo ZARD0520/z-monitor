@@ -1,4 +1,4 @@
-import { isFalse } from "./utils";
+import { isFalse, reLog } from "./utils";
 export class Plugin {
   constructor({ mt, name }, options) {
     // monitor 实例

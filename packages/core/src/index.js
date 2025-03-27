@@ -262,7 +262,7 @@ export class Monitor {
       this.commonParams.push(cb);
       return;
     }
-    reLog(`setCommonConfig 方法必须要传递函数类型`, 'error');
+    reLog('setCommonConfig 方法必须要传递函数类型', 'error');
   }
   // 调用监听事件
   emit(type, value) {

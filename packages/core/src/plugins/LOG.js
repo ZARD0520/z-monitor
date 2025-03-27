@@ -25,8 +25,8 @@ export default class LOG {
     this.time = options.time || 60 * 1000;
     this.customMethod = options.customMethod || null;
     this.MAX_HTTP_FAIL = options.MAX_HTTP_FAIL || 20;
-    this.data = getNotUploadedData()
-    listenUnload()
+    this.data = this.getNotUploadedData()
+    this.listenUnload()
     if (this.type === 'time') {
       this.openInterval();
     }
