@@ -30,4 +30,6 @@
   * Vue3-admin
   * React-next ai
 * 修bug(一切功能还没落地使用过，纯盲打)
+* 支持sourcemap
 * 支持websocket
+* 拓展多平台
