@@ -39,12 +39,17 @@ export default function createMonitor(React, { useHistory, useLocation } = {}, c
   }
   try {
     const { register, ERROR: REACT_ERROR, createRouterMonitor, createPerformanceObserve } = usePlatform(options.platform)
+
+    const mergePluginConfig = Object.assign({}, defaultPluginConfig, pluginConfig)
+
     const mergeConfig = {
       url: options.url,
       key: options.key,
-      plugins: {}
+      plugins: {
+        http: mergePluginConfig.http,
+        log: mergePluginConfig.log
+      }
     }
-    const mergePluginConfig = Object.assign({}, defaultPluginConfig, pluginConfig)
 
     const monitor = new Monitor(mergeConfig)
     // 注册平台监控
