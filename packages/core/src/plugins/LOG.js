@@ -25,7 +25,7 @@ export default class LOG {
     this.time = options.time || 60 * 1000;
     this.customMethod = options.customMethod || null;
     this.MAX_HTTP_FAIL = options.MAX_HTTP_FAIL || 20;
-    this.data = this.getNotUploadedData()
+    this.getNotUploadedData()
     this.listenUnload()
     if (this.type === 'time') {
       this.openInterval();
@@ -36,6 +36,8 @@ export default class LOG {
     if (saveDataStr) {
       this.data = JSON.parse(saveDataStr)
       localStorage.removeItem(`monitor_not_uploaded_${this.mt.appName}`)
+    } else {
+      this.data = []
     }
   }
   listenUnload() {
@@ -49,7 +51,7 @@ export default class LOG {
   openInterval() {
     this.cancelInterval();
     this.interval = setInterval(() => {
-      if (this.data.length) {
+      if (this.data?.length) {
         this.uploadData();
       }
     }, this.time);

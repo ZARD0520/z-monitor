@@ -41,12 +41,17 @@ export default {
     }
     try {
       const { register, ERROR: VUE_ERROR, createRouterMonitor, createPerformanceObserve } = usePlatform(options.platform)
+      
+      const mergePluginConfig = Object.assign({}, defaultPluginConfig, options.pluginConfig)
+      
       const mergeConfig = {
         key: options.key,
         url: options.url,
-        plugins: {}
+        plugins: {
+          http: mergePluginConfig.http,
+          log: mergePluginConfig.log
+        }
       }
-      const mergePluginConfig = Object.assign({}, defaultPluginConfig, options.pluginConfig)
 
       const monitor = new Monitor(mergeConfig)
       // 注册平台监控

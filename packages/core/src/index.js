@@ -173,10 +173,13 @@ export class Monitor {
   // 注册插件
   pluginCall(name, module) {
     try {
-      const options = getObj(this.options.plugins, name);
+      let options = getObj(this.options.plugins, name);
       this.plugins[name] = new module({ mt: this, options: this.options, name }, options);
       // 初始化插件
       const plugin = this.plugins[name];
+      if (name === 'http') {
+        options = { ...options, url: this.options.url }
+      }
       plugin.init && plugin.init(options);
     } catch (e) {
       console.log('插件注册错误', name);

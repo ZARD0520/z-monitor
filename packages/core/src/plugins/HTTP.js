@@ -1,7 +1,7 @@
 import { isFalse } from '../utils/index'
 
 const config = {
-  url: '',
+  url: 'http://localhost:8001',
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
@@ -13,13 +13,13 @@ export default class HTTP {
     this.mt = mt;
   }
   init(options) {
-    if (!options.requestConfig.url && !options.customMethod) {
-      console.error('url is required');
-    }
     this.url = (options.url || config.url) + '/api/monitor/add';
     this.method = options.requestConfig.method || config.method;
     this.headers = options.requestConfig.headers || config.headers;
     this.customMethod = options.customMethod || null;
+    if (!this.url && !this.customMethod) {
+      console.error('url is required');
+    }
   }
   // data上传数据   done方法手动控制请求是否完毕
   request(data, done) {
