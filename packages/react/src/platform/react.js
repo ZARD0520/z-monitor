@@ -1,4 +1,5 @@
 import { Plugin } from 'z-monitor-core'
+import { isNext } from './utils'
 
 export function register(React) {
   return function (mt, plugins = null) {
@@ -120,12 +121,29 @@ export function createRouterMonitor({
         }
       }
 
+      const ifNext = isNext()
       React.useEffect(() => {
-        const unlisten = history.listen((location, action) => {
-          sendRouteChange(location.pathname, history.location.pathname)
-        })
-        return () => unlisten()
-      }, [history])
+        // 区分next和react
+        if (ifNext) {
+          history.events.on('routeChangeComplete', (url, { shallow }) => {
+            if (!shallow) {
+              sendRouteChange(url, history.asPath)
+            }
+          })
+          return () => {
+            history.events.off('routeChangeComplete', (url, { shallow }) => {
+              if (!shallow) {
+                sendRouteChange(url, history.asPath)
+              }
+            })
+          }
+        } else {
+          const unlisten = history.listen((location, action) => {
+            sendRouteChange(location.pathname, history.location.pathname)
+          })
+          return () => unlisten()
+        }
+      }, [history, sendRouteChange])
     }
   }
 }
