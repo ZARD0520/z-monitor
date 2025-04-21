@@ -53,7 +53,7 @@ export default class HTTP {
     }
     //发送请求
     const requestParams = {
-      platform: this.mt.platform,
+      platform: this.mt.platformName,
       projectId: this.mt.key,
       sessionId: this.mt.sessionId,
       data
