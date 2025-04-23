@@ -7,10 +7,10 @@ export default class USERINFO extends Plugin {
     this.getUserInfo = this.getUserInfo;
   }
   async getUserInfo(time) {
-    if (!this.options.customMethod) {
-      return console.error('customMethod is required')
+    if (!this.options.getData) {
+      return console.error('getData is required')
     }
-    const data = this.options.customMethod
+    const data = this.options.getData()
     if (data) {
       this.send({
         type: this.TYPES.USERINFO,

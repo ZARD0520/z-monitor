@@ -27,7 +27,7 @@ export const defaultPluginConfig = {
     customMethod: null/* (data, done) => { } */, // 自定义请求，data为采集上报的参数数据
   },
   userInfo: {
-    customMethod: null/* () => { return {} } */
+    getData: null/* () => { return {} } */
   },
   videoRecord: {
     waitTime: 2000, // 延迟多久上报，采集报错后的内容
