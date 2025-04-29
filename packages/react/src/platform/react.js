@@ -33,7 +33,7 @@ export function register(React) {
 export class ERROR extends Plugin {
   init() {
     const isReact = this.mt.platformName === 'React';
-    if (isReact) {
+    if (!isReact) {
       return console.error('检测当前不是react app环境，必须调用register(React)(monitor)注册')
     }
     console.log('React Error init');
