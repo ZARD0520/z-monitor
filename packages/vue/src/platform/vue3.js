@@ -1,4 +1,5 @@
 import { Plugin } from 'z-monitor-core'
+import { nextTick } from 'vue'
 
 export function register(Vue) {
   return function (mt, plugins = null) {
@@ -40,7 +41,7 @@ export class ERROR extends Plugin {
       Vue.config.errorHandler = function (...args) {
         if (!_this.isClose) {
           const [err, vm, info] = args;
-          Vue.nextTick(() => {
+          nextTick(() => {
             _this.send({
               type: _this.TYPES.CODE_ERROR,
               level: _this.LEVELS.ERROR,
