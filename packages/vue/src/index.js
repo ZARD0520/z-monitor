@@ -42,8 +42,12 @@ export default {
     try {
       const { register, ERROR: VUE_ERROR, createRouterMonitor, createPerformanceObserve } = usePlatform(options.platform)
       
-      const mergePluginConfig = Object.assign({}, defaultPluginConfig, options.pluginConfig)
-      
+      const mergePluginConfig = {}
+      for (const key in defaultPluginConfig) {
+        mergePluginConfig[key] =
+          Object.assign({}, defaultPluginConfig[key], options.pluginConfig[key])
+      }
+  
       const mergeConfig = {
         key: options.key,
         url: options.url,

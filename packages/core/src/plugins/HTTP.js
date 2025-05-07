@@ -36,7 +36,7 @@ export default class HTTP {
       this.customMethod(data, done);
       return;
     } else {
-      if (this.mt.plugins.userInfo.options?.getData) {
+      if (this.mt.plugins.userInfo?.options?.getData) {
         this.mt.plugins.userInfo.getUserInfo(data[0]?.time)
       }
     }

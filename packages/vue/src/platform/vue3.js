@@ -1,5 +1,5 @@
 import { Plugin } from 'z-monitor-core'
-import { nextTick } from 'vue'
+import { nextTick, provide } from 'vue'
 
 export function register(Vue) {
   return function (mt, plugins = null) {
@@ -12,6 +12,11 @@ export function register(Vue) {
     mt.platformName = 'vue3'
     mt.platform = Vue
     Vue.config.globalProperties.mt = mt
+    Vue.mixin({
+      created() {
+        provide('mt', mt)
+      }
+    })
     if (plugins) {
       for (let i in plugins) {
         if (!plugins[i]) {

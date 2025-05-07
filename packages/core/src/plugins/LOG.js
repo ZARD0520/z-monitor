@@ -112,6 +112,7 @@ export default class LOG {
         this.HTTP_FAIL_COUNT++;
         // 当失败超过 MAX_HTTP_FAIL 自动关闭日志收集，防止一直发请求
         if (this.HTTP_FAIL_COUNT >= this.MAX_HTTP_FAIL) {
+          console.error('重试次数达到上限，关闭日志收集')
           this.mt.close();
         }
       }

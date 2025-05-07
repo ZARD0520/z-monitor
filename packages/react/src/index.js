@@ -40,7 +40,11 @@ export default function createMonitor(React, { useHistory, useLocation } = {}, c
   try {
     const { register, ERROR: REACT_ERROR, createRouterMonitor, createPerformanceObserve } = usePlatform(options.platform)
 
-    const mergePluginConfig = Object.assign({}, defaultPluginConfig, pluginConfig)
+    const mergePluginConfig = {}
+    for (const key in defaultPluginConfig) {
+      mergePluginConfig[key] =
+        Object.assign({}, defaultPluginConfig[key], options.pluginConfig[key])
+    }
 
     const mergeConfig = {
       url: options.url,

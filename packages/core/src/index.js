@@ -200,6 +200,7 @@ export class Monitor {
     });
   }
   close() {
+    this.plugins.log.isClose = true
     for (let name in this.plugins) {
       if (!this.isInnerPlugins(name)) {
         this.pluginDestroy(name);
