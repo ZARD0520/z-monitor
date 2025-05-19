@@ -84,6 +84,7 @@ export default class LOG {
     this.mt.plugins.http.request(data, async (xhr) => {
       // 如果上报成功，从刚才条数开始截取
       // 因为在请求期间已经有新的日志过来，不能直接清空
+      window.log_report = false
       if (xhr.status === 200) {
         this.data = this.data.slice(currentLen, this.data.length);
       } else if (xhr.status === 403) {
