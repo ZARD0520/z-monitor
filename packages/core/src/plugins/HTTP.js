@@ -22,7 +22,10 @@ export default class HTTP {
     }
   }
   // data上传数据   done方法手动控制请求是否完毕
-  request(data, done) {
+  async request(data, done) {
+    if (window.log_report) {
+      return
+    }
     // 数据预处理
     if (this.mt.beforeReport) {
       let _data = this.mt.beforeReport(data);
@@ -37,7 +40,7 @@ export default class HTTP {
       return;
     } else {
       if (this.mt.plugins.userInfo?.options?.getData) {
-        this.mt.plugins.userInfo.getUserInfo(data[0]?.time)
+        await this.mt.plugins.userInfo.getUserInfo(data[0]?.time)
       }
     }
     this.report(data, done);
