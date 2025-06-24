@@ -32,76 +32,94 @@ const OPTIONAL_PLUGINS = {
   pagePerformance: null
 }
 
-export default function createMonitor(React, { useHistory, useLocation } = {}, configs = {}, pluginConfig = {}) {
+export default function createMonitor(React, { history } = {}, configs = {}, pluginConfig = {}) {
+  // 初始化监控实例
+  const monitor = React.useRef(null)
+  const MonitorWrapper = React.useRef(({ children }) => <>{children}</>)
+
+  // 合并配置
   const options = {
     ...DEFAULT_CONFIG,
     ...configs
   }
-  try {
-    const { register, ERROR: REACT_ERROR, createRouterMonitor, createPerformanceObserve } = usePlatform(options.platform)
 
-    const mergePluginConfig = {}
-    for (const key in defaultPluginConfig) {
-      mergePluginConfig[key] =
-        Object.assign({}, defaultPluginConfig[key], options.pluginConfig[key])
-    }
+  const { register, ERROR: REACT_ERROR, RouterMonitorPlugin, useRouterMonitor, PerformanceMonitorPlugin } = usePlatform(options.platform)
 
-    const mergeConfig = {
-      url: options.url,
-      key: options.key,
-      plugins: {
-        http: mergePluginConfig.http,
-        log: mergePluginConfig.log
+  // 未存在实例，初始化
+  if (!monitor.current) {
+    // 初始化监控系统
+    try {
+      const mergePluginConfig = {};
+      for (const key in defaultPluginConfig) {
+        mergePluginConfig[key] = {
+          ...defaultPluginConfig[key],
+          ...pluginConfig[key]
+        };
       }
-    }
 
-    const monitor = new Monitor(mergeConfig)
-    // 注册平台监控
-    const withMt = register(React)(monitor)
+      // 性能监控配置
+      const performanceConfig =
+        options.trackList?.includes('pagePerformance') &&
+          mergePluginConfig?.pagePerformance
+          ? {
+            enabled: true,
+            entryTypes: mergePluginConfig.pagePerformance.entryTypes
+          }
+          : null
 
-    // 注册核心插件
-    Object.entries(CORE_PLUGINS).forEach(([name, plugin]) => {
-      monitor.pluginCall(name, plugin)
-    })
+      const mergeConfig = {
+        url: options.url,
+        key: options.key,
+        plugins: {
+          http: mergePluginConfig.http,
+          log: mergePluginConfig.log
+        }
+      };
 
-    // 注册平台错误处理插件
-    monitor.pluginCall('platform_error', REACT_ERROR)
+      const monitorInstance = new Monitor(mergeConfig);
 
-    // 注册可选插件
-    options.trackList?.forEach(pluginName => {
-      if (OPTIONAL_PLUGINS[pluginName] && mergePluginConfig[pluginName]) {
-        mergeConfig.plugins[pluginName] = mergePluginConfig[pluginName]
-        monitor.pluginCall(pluginName, OPTIONAL_PLUGINS[pluginName])
+      const withMt = register(React)(monitorInstance);
+
+      // 注册核心插件
+      Object.entries(CORE_PLUGINS).forEach(([name, plugin]) => {
+        monitorInstance.pluginCall(name, plugin);
+      });
+
+      // 注册平台错误处理插件
+      monitorInstance.pluginCall('platform_error', REACT_ERROR);
+      // 注册可选插件
+      options.trackList?.forEach(pluginName => {
+        if (OPTIONAL_PLUGINS[pluginName] && mergePluginConfig[pluginName]) {
+          mergeConfig.plugins[pluginName] = mergePluginConfig[pluginName];
+          monitorInstance.pluginCall(pluginName, OPTIONAL_PLUGINS[pluginName]);
+        }
+      });
+
+      // 注册路由插件（但不立即启用）
+      if (React && history) {
+        monitorInstance.pluginCall('routerChange', RouterMonitorPlugin);
       }
-    })
 
-    // 注册路由相关插件
-    if (React && useHistory) {
-      monitor.pluginCall('routerChange', createRouterMonitor({ React, useHistory }))
-    }
+      // 注册性能监控插件（但不立即启用）
+      if (performanceConfig) {
+        monitorInstance.pluginCall('pagePerformance', PerformanceMonitorPlugin);
+      }
 
-    // 注册性能监控
-    if (options.trackList?.includes('pagePerformance') &&
-      mergePluginConfig.pagePerformance && React && useLocation) {
-      mergeConfig.plugins.pagePerformance = mergePluginConfig.pagePerformance
-      monitor.pluginCall('pagePerformance',
-        createPerformanceObserve(
-          mergePluginConfig.pagePerformance.entryTypes,
-          React,
-          useLocation
-        )
-      )
+      MonitorWrapper.current = withMt(({ children }) => <>{children}</>)
+      monitor.current = monitorInstance
+    } catch (e) {
+      console.error('[Z-Monitor] Initialization failed:', {
+        error: e,
+        config: { ...options, trackList: options.trackList },
+        platform: options.platform
+      });
     }
-    return {
-      withMt,
-      ErrorHanding: monitor.plugins.platform_error?.ErrorBoundary || null
-    }
-  } catch (e) {
-    console.error('[Z-Monitor] Initialization failed:', {
-      error: e,
-      config: { ...options, trackList: options.trackList },
-      platform: options.platform
-    })
-    return null
+  }
+
+  // 处理路由插件的启用/禁用，TODO
+  useRouterMonitor(monitor.current, React, history)
+
+  return {
+    MonitorWrapper: MonitorWrapper.current
   }
 }

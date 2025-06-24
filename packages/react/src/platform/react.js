@@ -23,8 +23,17 @@ export function register(React) {
       }
     }
     return function (WrappedComponent) {
+      const ErrorBoundary = mt.plugins.platform_error?.ErrorBoundary
       return function (props) {
-        return <WrappedComponent {...props} mt={mt} />;
+        if (!ErrorBoundary) {
+          console.warn('错误边界不可用, 已跳过')
+          return <WrappedComponent {...props} mt={mt} />
+        }
+        return (
+          <ErrorBoundary fallback={props.fallback}>
+            <WrappedComponent {...props} mt={mt} />
+          </ErrorBoundary>
+        )
       }
     }
   }
@@ -46,12 +55,9 @@ export class ERROR extends Plugin {
           type: _this.TYPES.CODE_ERROR,
           level: _this.LEVELS.ERROR,
           data: {
-            message: error,
+            message: error.message,
             stack: errorInfo.componentStack,
-            hook: {
-              props: errorInfo.props,
-              state: errorInfo.state
-            },
+            targetType: '组件边界错误',
             vmName: errorInfo.componentName
           }
         })
@@ -74,7 +80,7 @@ export class ERROR extends Plugin {
 
       render() {
         if (this.state.hasError) {
-          return <h1>Something went wrong.</h1>;
+          return this.props.fallback || <h1>Something went wrong.</h1>;
         }
 
         return this.props.children;
@@ -86,64 +92,128 @@ export class ERROR extends Plugin {
   }
 }
 
-export function createRouterMonitor({
-  React,
-  useHistory
-}) {
-  return class extends Plugin {
-    init() {
-      const isReact = this.mt.platformName === 'React';
-      if (!isReact) {
-        return console.error('检测当前不是react app环境，必须调用register(React)(monitor)注册');
+export class RouterMonitorPlugin extends Plugin {
+  init() {
+    const isReact = this.mt.platformName === 'React';
+    if (!isReact) {
+      return console.error('检测当前不是react app环境，必须调用register(React)(monitor)注册');
+    }
+
+    this.addCommonData('TYPES', 'ROUTER', {
+      text: '页面跳转',
+      value: 'ROUTER.CHANGE',
+    });
+  }
+
+  sendRouteChange(to, from) {
+    if (!this.isClose) {
+      this.send({
+        type: this.TYPES.ROUTER,
+        level: this.LEVELS.INFO,
+        data: {
+          fromPath: from.pathname || from,
+          toPath: to.pathname || to,
+          fromTitle: from.name || document.title
+        }
+      });
+    }
+  }
+}
+
+export function useRouterMonitor(mt, React, history) {
+  const ifNext = isNext()
+  const [prevRoutePath, setPrevRoutePath] = React.useState(history.location.pathname)
+
+  React.useEffect(() => {
+    const routerPlugin = mt?.plugins?.routerChange;
+    const performancePlugin = mt?.plugins?.pagePerformance;
+
+    // 前置判断
+    if (!routerPlugin) {
+      return console.error('尚未注册路由监控插件')
+    }
+    if (!history) {
+      return console.error('路由监控需要传入history对象')
+    }
+
+    const sendRouteChange = (url, path) => {
+      routerPlugin.sendRouteChange(url, path);
+      // 性能相关的监控
+      if (performancePlugin) {
+        // 停止前一路由的监控（保留数据）
+        if (prevRoutePath !== url) {
+          performancePlugin.stopRouteMonitoring(prevRoutePath);
+        }
+
+        // 启动新路由监控
+        performancePlugin.startRouteMonitoring(url);
       }
-      if (!React || !useHistory) {
-        return console.error('React或路由相关hooks未传入，请先传入相关参数')
-      }
-      console.log('React Router change');
-      this.addCommonData('TYPES', 'ROUTER', {
-        text: '页面跳转',
-        value: 'ROUTER.CHANGE',
+    }
+
+    if (ifNext) {
+      const handleRouteChange = (url, { shallow }) => {
+        if (!shallow) {
+          sendRouteChange(url, prevRoutePath);
+        }
+      };
+
+      history.events.on('routeChangeComplete', handleRouteChange);
+
+      return () => {
+        history.events.off('routeChangeComplete', handleRouteChange);
+      };
+    } else {
+      const unlisten = history.listen((location) => {
+        sendRouteChange(
+          location.pathname,
+          prevRoutePath
+        );
+        setPrevRoutePath(location.pathname)
       });
 
-      const history = useHistory()
-
-      const sendRouteChange = (to, from) => {
-        if (!this.isClose) {
-          this.send({
-            type: this.TYPES.ROUTER,
-            level: this.LEVELS.INFO,
-            data: {
-              fromPath: from.pathname,
-              toPath: to.pathname,
-              fromTitle: from.name || document.title
-            }
-          })
-        }
-      }
-
-      const ifNext = isNext()
-      React.useEffect(() => {
-        // 区分next和react
-        if (ifNext) {
-          history.events.on('routeChangeComplete', (url, { shallow }) => {
-            if (!shallow) {
-              sendRouteChange(url, history.asPath)
-            }
-          })
-          return () => {
-            history.events.off('routeChangeComplete', (url, { shallow }) => {
-              if (!shallow) {
-                sendRouteChange(url, history.asPath)
-              }
-            })
-          }
-        } else {
-          const unlisten = history.listen((location, action) => {
-            sendRouteChange(location.pathname, history.location.pathname)
-          })
-          return () => unlisten()
-        }
-      }, [history, sendRouteChange])
+      return () => unlisten()
     }
+  }, [ifNext, history])
+}
+
+export class PerformanceMonitorPlugin extends Plugin {
+  init(options = {}) {
+    this.observers = new Map();
+    this.currentRoute = null;
+    this.entryTypes = options.entryTypes || ['navigation', 'resource'];
+    this.startRouteMonitoring(window.location.pathname);
+  }
+
+  startRouteMonitoring(routePath) {
+    if (this.observers.has(routePath)) return;
+
+    const observer = new PerformanceObserver((list) => {
+      list.getEntries().forEach(entry => {
+        this.send({
+          type: this.TYPES.PERFORMANCE,
+          level: this.LEVELS.INFO,
+          data: entry
+        });
+      });
+    });
+
+    observer.observe({ entryTypes: this.entryTypes });
+    this.observers.set(routePath, observer);
+    this.currentRoute = routePath;
+  }
+
+  stopRouteMonitoring(routePath) {
+    const observer = this.observers.get(routePath);
+    console.log(routePath, this.observers)
+    if (observer) {
+      console.log('this is stop2')
+      observer.disconnect();
+      this.observers.delete(routePath);
+    }
+  }
+
+  destroy() {
+    this.observers.forEach(observer => observer.disconnect());
+    this.observers.clear();
   }
 }
