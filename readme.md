@@ -27,9 +27,10 @@
 
 <!-- TO DO LIST -->
 * 实际应用
-  * Vue3-admin
   * React-admin
-* 修bug(一切功能还没落地使用过，纯盲打)
+* 修bug&&优化(一切功能还没落地使用过，纯盲打)
+  * 移除地理位置&&性能采集优化
+* 全流程联调
 * 支持sourcemap
 * 支持websocket
 * 拓展多平台(Next|Nuxt|小程序|and so on)
