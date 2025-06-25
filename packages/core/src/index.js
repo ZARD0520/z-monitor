@@ -222,6 +222,7 @@ export class Monitor {
     this.plugins.log.push(item);
   }
   getCommonConfig() {
+    this.initBaseInfo()
     let total = {
       time: window.Date.now(),
       info: {
