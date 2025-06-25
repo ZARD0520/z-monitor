@@ -138,27 +138,21 @@ export class Monitor {
     const offsetHours = Math.floor(Math.abs(timeZoneOffset) / 60)
     const offsetDirection = timeZoneOffset > 0 ? "-" : "+"
     const timezone = offsetDirection + offsetHours
+    const networkInfo = navigator.connection || navigator.mozConnection || navigator.webkitConnection || {}
     this.baseInfo = {
       timezone,
       language: navigator.language || navigator.userLanguage ||'en',
       deviceInfo: {
         userAgent: navigator.userAgent,
-        networkInfo: navigator.connection || navigator.mozConnection || navigator.webkitConnection
-      },
-      locationInfo: {}
-    }
-    navigator.geolocation?.getCurrentPosition(
-      (position) => {
-        const geoInfo = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        };
-        this.baseInfo.locationInfo = geoInfo
-      },
-      (error) => {
-        console.error('Failed to get geolocation:', error);
+        networkInfo: {
+          downlink: networkInfo.downlink,  // 下行速度（Mbps）
+          effectiveType: networkInfo.effectiveType, // 网络类型（如 '4g'）
+          type: networkInfo.type,      // 连接类型（如 'wifi'）
+          rtt: networkInfo.rtt,
+          saveData: networkInfo.saveData
+        }
       }
-    );
+    }
   }
   initClass() {
     // 注册日志插件
@@ -228,7 +222,6 @@ export class Monitor {
     this.plugins.log.push(item);
   }
   getCommonConfig() {
-    this.initBaseInfo()
     let total = {
       time: window.Date.now(),
       info: {
