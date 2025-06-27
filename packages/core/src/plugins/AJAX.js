@@ -4,44 +4,63 @@ export default class AJAX extends Plugin {
   init(options = {}) {
     console.log('AJAX init');
     const _this = this;
-    // 默认传递请求参数
-    if (options.req === null || options.req === undefined) {
-      options.req = true;
-    }
-    // 默认不传递响应结果
-    if (options.res === null || options.res === undefined) {
-      options.res = false;
+
+    const finalOptions = {
+      req: true,
+      res: false,
+      ...options
     }
 
+    const { req, res, excludeUrls } = finalOptions
+
     const open = XMLHttpRequest.prototype.open;
+    this.requestURL = ''
 
     XMLHttpRequest.prototype.open = function (...args) {
       if (!_this.isClose) {
         // 记录开始时间
         this.startTime = Date.now();
+        this.requestURL = args[1]
       }
       return open.apply(this, args);
     };
+
     const send = XMLHttpRequest.prototype.send;
     XMLHttpRequest.prototype.send = function (...rest) {
       if (!_this.isClose) {
         const body = rest[0];
         const requestData = body;
+        const recordUrl = this.responseURL || this.requestURL
         this.addEventListener('readystatechange', function () {
-          if (!this.responseURL || options.excludeUrls?.includes(this.responseURL)) {
-            return;
+          if (isExcludeUrl(recordUrl, excludeUrls)) {
+            return
           }
           // 获取请求间隔
           const interval = Date.now() - this.startTime + 'ms';
           const data = {
-            url: this.responseURL + ` [${this.status}]`,
+            url: recordUrl + ` [${this.status}]`,
             interval,
           };
+          if (req && requestData) {
+            data.req = requestData;
+          }
+
+          // 网络错误的处理
+          if (!recordUrl && this.status === 0) {
+            _this.send(
+              {
+                type: _this.TYPES.AJAX_FAIL,
+                level: _this.LEVELS.ERROR,
+                time: this.startTime, // 用ajax开始时间，而不是响应后时间
+                data
+              },
+              this,
+            )
+            return;
+          }
+          // 响应正常的处理
           if (this.readyState === 4) {
-            if (options.req && requestData) {
-              data.req = requestData;
-            }
-            if (options.res && this.responseText) {
+            if (res && this.responseText) {
               data.res = this.responseText;
             }
             if (this.status >= 200 && this.status < 300) {
@@ -71,4 +90,8 @@ export default class AJAX extends Plugin {
       return send.apply(this, rest);
     };
   }
+}
+
+function isExcludeUrl(url, excludeUrls) {
+  return excludeUrls?.some(excludeUrl => url?.includes(excludeUrl))
 }
