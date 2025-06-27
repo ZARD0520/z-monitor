@@ -78,7 +78,7 @@ export default function createMonitor(React, { history } = {}, configs = {}, plu
 
       const monitorInstance = new Monitor(mergeConfig);
 
-      const withMt = register(React)(monitorInstance);
+      const withMt = register(React, monitorInstance);
 
       // 注册核心插件
       Object.entries(CORE_PLUGINS).forEach(([name, plugin]) => {
@@ -120,6 +120,7 @@ export default function createMonitor(React, { history } = {}, configs = {}, plu
   useRouterMonitor(monitor.current, React, history)
 
   return {
-    MonitorWrapper: MonitorWrapper.current
+    MonitorWrapper: MonitorWrapper.current,
+    mt: monitor.current
   }
 }

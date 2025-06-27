@@ -1,40 +1,28 @@
 import { Plugin } from 'z-monitor-core'
 import { isNext } from './utils'
 
-export function register(React) {
-  return function (mt, plugins = null) {
-    if (!React) {
-      return console.error('必须要传入React')
-    }
-    if (!mt) {
-      return console.error('必须要传入monitor实例')
-    }
-    mt.platformName = 'React'
-    mt.platform = React
-    if (plugins) {
-      for (let i in plugins) {
-        if (!plugins[i]) {
-          return console.error(`找不到${plugins[i]}模块`)
-        }
-        if (!plugins[i].open) {
-          return console.error(`${plugins[i]}模块未激活`)
-        }
-        mt.pluginCall(i, plugins[i])
+export function register(React, mt) {
+  if (!React) {
+    return console.error('必须要传入React')
+  }
+  if (!mt) {
+    return console.error('必须要传入monitor实例')
+  }
+  mt.platformName = 'React'
+  mt.platform = React
+
+  return function (WrappedComponent) {
+    const ErrorBoundary = mt.plugins.platform_error?.ErrorBoundary
+    return function (props) {
+      if (!ErrorBoundary) {
+        console.warn('错误边界不可用, 已跳过')
+        return <WrappedComponent {...props} />
       }
-    }
-    return function (WrappedComponent) {
-      const ErrorBoundary = mt.plugins.platform_error?.ErrorBoundary
-      return function (props) {
-        if (!ErrorBoundary) {
-          console.warn('错误边界不可用, 已跳过')
-          return <WrappedComponent {...props} mt={mt} />
-        }
-        return (
-          <ErrorBoundary fallback={props.fallback}>
-            <WrappedComponent {...props} mt={mt} />
-          </ErrorBoundary>
-        )
-      }
+      return (
+        <ErrorBoundary fallback={props.fallback}>
+          <WrappedComponent {...props} />
+        </ErrorBoundary>
+      )
     }
   }
 }
