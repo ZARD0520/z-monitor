@@ -26,11 +26,6 @@
     * 在ErrorHanding内部就可以放置项目代码了
 
 <!-- TO DO LIST -->
-* 实际应用
-  * React-admin
-* 修bug&&优化(一切功能还没落地使用过，纯盲打)
-  * 网络信息实时监听
-  * 性能采集优化
 * 全流程联调
 * 支持sourcemap
 * 支持websocket
