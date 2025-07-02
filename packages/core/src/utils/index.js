@@ -1,13 +1,17 @@
 export function reLog(value, type = 'log') {
-  console[type](value)
+  if (typeof console[type] === 'function') {
+    console[type](value);
+  } else {
+    console.log(value);
+  }
 }
 
 export function hasValue(value) {
-  return value !== null || value !== undefined
+  return value !== null && value !== undefined;
 }
 
 export function isFalse(data) {
-  return data === false;
+  return !data;
 }
 
 export const getObjType = (obj, type) => {
@@ -31,13 +35,7 @@ export const getObjType = (obj, type) => {
 }
 
 export function getObj(value, name) {
-  if (!value) {
-    return {};
-  }
-  if (value) {
-    return value[name] || {};
-  }
-  return {};
+  return value ? (value[name] || {}) : {};
 }
 
 // DOM相关
