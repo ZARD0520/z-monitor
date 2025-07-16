@@ -73,7 +73,7 @@ export default class LOG {
     // 存放日志
     this.data.push(item);
     if (this.type === 'time') return;
-    if ((this.data.length / this.max) % 1 === 0) {
+    if (this.data.length && (this.data.length / this.max) % 1 === 0) {
       this.uploadData();
     }
   }
@@ -85,7 +85,7 @@ export default class LOG {
       // 如果上报成功，从刚才条数开始截取
       // 因为在请求期间已经有新的日志过来，不能直接清空
       window.log_report = false
-      if (xhr.status === 200) {
+      if ([200, 201].includes(xhr.status)) {
         this.data = this.data.slice(currentLen, this.data.length);
       } else if (xhr.status === 403) {
         this.mt.emit('error', EMIT_ERROR.SESSION_FAILED);

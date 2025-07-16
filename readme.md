@@ -29,6 +29,7 @@
 * 全流程联调
 * 优化-性能采集
 * 优化-如何不影响其他正常请求
+* 优化-加密传输
 * 支持sourcemap
 * 支持websocket
 * 拓展多平台(Next|Nuxt|小程序|and so on)

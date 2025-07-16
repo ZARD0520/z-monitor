@@ -4,11 +4,11 @@ export default class HTTP {
     this.mt = mt;
   }
   init(options) {
-    this.url = options.requestConfig.url + '/api/monitor/add'
+    this.url = options.url + '/api/monitor/add'
     this.method = options.requestConfig.method
     this.headers = options.requestConfig.headers
     this.customMethod = options.customMethod || null
-    if (!options.requestConfig.url && !this.customMethod) {
+    if (!options.url && !this.customMethod) {
       console.error('url or customMethod is required')
     }
   }
@@ -29,10 +29,6 @@ export default class HTTP {
       window.log_report = true;
       this.customMethod(data, done);
       return;
-    } else {
-      if (this.mt.plugins.userInfo?.options?.getData) {
-        await this.mt.plugins.userInfo.getUserInfo(data[0]?.time)
-      }
     }
     this.report(data, done);
   }

@@ -21,7 +21,6 @@ export const defaultPluginConfig = {
   http: {
     isCustomRequest: false,
     requestConfig: {
-      url: 'http://localhost:8001',
       method: 'POST', // 请求类型：POST、GET等
       headers: {
         'Content-Type': 'application/json'
