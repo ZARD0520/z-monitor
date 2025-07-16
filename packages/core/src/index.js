@@ -21,8 +21,11 @@ export const defaultPluginConfig = {
   http: {
     isCustomRequest: false,
     requestConfig: {
-      method: '', // 请求类型：POST、GET等
-      headers: {}, // 请求头配置
+      url: 'http://localhost:8001',
+      method: 'POST', // 请求类型：POST、GET等
+      headers: {
+        'Content-Type': 'application/json'
+      } // 请求头配置
     },
     customMethod: null/* (data, done) => { } */, // 自定义请求，data为采集上报的参数数据
   },
