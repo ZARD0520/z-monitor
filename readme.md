@@ -28,8 +28,10 @@
 <!-- TO DO LIST -->
 * 全流程联调
 * 优化-性能采集
-* 优化-如何不影响其他正常请求
-* 优化-加密传输
+* 优化-采集防抖(click)
+* 优化-click埋点可添加属性标识，有标识才采集，还可以利用属性传防抖时长
+* 优化-如何不影响其他正常请求(sendBeacon-WebWorker-requestIdleCallback)
+* 优化-加密传输&&数据压缩
 * 支持sourcemap
 * 支持websocket
 * 拓展多平台(Next|Nuxt|小程序|and so on)
