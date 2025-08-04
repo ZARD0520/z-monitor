@@ -137,3 +137,18 @@ export function addToDebounceMap(element, debounceMs, debounceMap) {
     debounceMap.delete(element)
   }, actualDebounce)
 }
+
+// 获取调度器
+export function getScheduler(fn) {
+  let scheduleFlush = () => setTimeout(fn, 0)
+  if (typeof requestIdleCallback === 'function') {
+    scheduleFlush = () => {
+      requestIdleCallback(fn)
+    }
+  } else if (typeof MessageChannel === 'function') {
+    const channel = new MessageChannel()
+    channel.port1.onmessage = () => fn()
+    scheduleFlush = () => channel.port2.postMessage(null)
+  }
+  return scheduleFlush
+}

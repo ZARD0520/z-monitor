@@ -12,7 +12,7 @@ export const defaultPluginConfig = {
     }, // 自定义处理ajax数据方法
   },
   log: {
-    type: "time", // type为time时，用时间来控制上传频率；type为num时，则用采集次数控制
+    type: "time", // type为time时，用时间来控制上传频率；type为num时，则用采集次数控制；type为hybrid时，两者同时控制
     time: 30 * 1000, // 隔30s上传一次日志
     MAX_HTTP_FAIL: 3, // 超过3次失败关闭监控，服务端接口可能错误
     customMethod: null /* (item) => { return item } */,
@@ -112,8 +112,8 @@ export class Monitor {
       })
 
       // 检查响应是否有效
-      if (response && response.sessionId) {
-        this.sessionId = response.sessionId
+      if (response && response.data?.sessionId) {
+        this.sessionId = response.data?.sessionId
         console.log("SessionId 初始化成功:", this.sessionId)
       } else {
         throw new Error("无效的响应数据")
@@ -142,7 +142,7 @@ export class Monitor {
     this.LEVELS = { ...LEVELS }
   }
   // 初始化选项
-  initOptions(options) {
+  initOptions() {
     this.appName = this.key + "-Monitor"
   }
   // 初始化基础信息
@@ -196,7 +196,7 @@ export class Monitor {
       }
       plugin.init && plugin.init(options)
     } catch (e) {
-      console.log("插件注册错误", name)
+      console.warn("插件注册错误", name, e)
       this.emit("error", EMIT_ERROR.PLUGIN_ERROR)
     }
   }
@@ -244,7 +244,6 @@ export class Monitor {
   getCommonConfig() {
     this.initBaseInfo()
     let total = {
-      time: window.Date.now(),
       info: {
         pageTitle: document.title,
         pageUrl: window.location.href,

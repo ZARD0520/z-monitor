@@ -13,10 +13,11 @@ export default class HTTP {
     }
   }
   // data上传数据   done方法手动控制请求是否完毕
-  async request(data, done) {
+  async request(data, done, useBeacon = false) {
     if (window.log_report) {
       return
     }
+    window.log_report = true
     // 数据预处理
     if (this.mt.beforeReport) {
       let _data = this.mt.beforeReport(data);
@@ -25,37 +26,86 @@ export default class HTTP {
       }
       data = _data;
     }
+    // 自定义处理
     if (this.customMethod) {
-      window.log_report = true;
-      this.customMethod(data, done);
+      this.customMethod(data, done, useBeacon);
       return;
     }
-    this.report(data, done);
+    this.report(data, done, useBeacon);
   }
-  // 内置请求
-  report(data, done) {
-    //创建异步对象
-    let xhr = new XMLHttpRequest();
-    window.log_report = true;
-    xhr.open(this.method, this.url);
-    for (let key in this.headers) {
-      xhr.setRequestHeader(key, this.headers[key]);
+
+  // 检查beacon
+  shouldUseBeacon(data) {
+    if (typeof navigator.sendBeacon !== 'function') {
+      return false
     }
-    //发送请求
-    const requestParams = {
+    const dataSize = new Blob([data]).size
+    return dataSize <= 60 * 1024
+  }
+
+  // 检查fetch
+  shouldUseFetch() {
+    return typeof fetch === 'function'
+  }
+
+  // beacon上报
+  reportWithBeacon(data) {
+    const blob = new Blob([data], { type: 'application/json' })
+    const success = navigator.sendBeacon(this.url, blob)
+    if (!success) {
+      console.warn('sendBeacon failed, falling back to other methods')
+      return
+    }
+    return success
+  }
+
+  // fetch上报
+  async reportWithFetch(data) {
+    const response = await fetch(this.url, {
+      method: this.method,
+      headers: this.headers,
+      body: data,
+      keepalive: true,
+      signal: AbortSignal.timeout(5000),
+      priority: 'low'
+    })
+    return {
+      status: response.status,
+      responseText: await response.text()
+    }
+  }
+
+  // 内置请求
+  async report(data, done, useBeacon) {
+    // 数据参数
+    const requestParams = JSON.stringify({
       platform: this.mt.platformName,
       projectId: this.mt.key,
       sessionId: this.mt.sessionId,
       data
-    }
-    xhr.send(JSON.stringify(requestParams));
-    xhr.onreadystatechange = function () {
-      // 这步为判断服务器是否正确响应
-      if (xhr.readyState == 4) {
-        done(xhr);
+    })
+
+    try {
+      let result
+      // 不同请求方法处理
+      if (useBeacon) {
+        result = this.reportWithBeacon(requestParams)
+      } else if (this.shouldUseFetch()) {
+        result = await this.reportWithFetch(requestParams)
+      } else {
+        result = await this.customRequest({
+          method: this.method,
+          url: this.url,
+          headers: this.headers,
+          data: requestParams
+        })
       }
-    };
+      done && done(result)
+    } catch (err) {
+      console.error('Request failed:', err)
+    }
   }
+
   customRequest({ method = 'GET', url, params = {}, data = null, headers = {} }) {
     return new Promise((resolve, reject) => {
       // 创建 XMLHttpRequest 对象
@@ -81,9 +131,9 @@ export default class HTTP {
           // 请求成功，解析响应数据
           try {
             const response = JSON.parse(xhr.responseText);
-            resolve(response);
+            resolve({ status: xhr.status, data: response, error: null });
           } catch (error) {
-            resolve(xhr.responseText); // 如果响应不是 JSON，直接返回原始数据
+            resolve({ status: xhr.status, data: null, error }); // 如果响应不是 JSON，直接返回原始数据
           }
         } else {
           // 请求失败，返回错误信息
@@ -105,7 +155,7 @@ export default class HTTP {
       if (data) {
         // 如果是 POST 请求，发送请求体数据
         if (headers['Content-Type'] === 'application/json') {
-          xhr.send(JSON.stringify(data)); // 发送 JSON 数据
+          xhr.send(typeof data === 'string' ? data : JSON.stringify(data)); // 发送 JSON 数据
         } else {
           const formData = new FormData();
           for (const [key, value] of Object.entries(data)) {

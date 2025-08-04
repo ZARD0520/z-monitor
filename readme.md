@@ -1,4 +1,4 @@
-<!-- 用法 -->
+<!-- 用法(待更新) -->
 * Vue
   * 调用createMonitor，传入参数
     * config
@@ -28,7 +28,6 @@
 <!-- TO DO LIST -->
 * 全流程联调
 * 优化-性能采集
-* 优化-如何不影响其他正常请求(sendBeacon-WebWorker-requestIdleCallback)
 * 优化-加密传输&&数据压缩
 * 支持sourcemap
 * 支持websocket

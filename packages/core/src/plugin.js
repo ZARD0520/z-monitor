@@ -1,4 +1,4 @@
-import { isFalse, reLog } from "./utils";
+import { isFalse, reLog, getScheduler } from "./utils";
 export class Plugin {
   constructor({ mt, name }, options) {
     // monitor 实例
@@ -25,14 +25,17 @@ export class Plugin {
     this.mt.addCommonData(prop, key, value);
   }
   send(data, ...other) {
-    if (this.customMethod) {
-      const res = this.customMethod(data, other);
-      if (isFalse(res)) {
-        return;
-      } else {
-        data = res;
+    const time = window.Date.now()
+    getScheduler(() => {
+      if (this.customMethod) {
+        const res = this.customMethod({ time, ...data }, other)
+        if (isFalse(res)) {
+          return
+        } else {
+          data = res
+        }
       }
-    }
-    this.mt.send(data);
+      this.mt.send({ time, ...data })
+    })()
   }
 }
