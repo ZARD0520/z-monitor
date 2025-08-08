@@ -18,5 +18,6 @@ export default {
     resolve(),
     commonjs(),
     terser(), // 代码混淆插件
+    // TODO: 生产包配置去除console插件
   ]
 }
