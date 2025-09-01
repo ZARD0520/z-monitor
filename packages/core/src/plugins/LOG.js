@@ -53,7 +53,7 @@ export default class LOG {
           let isSuccess = false
           httpPlugin.request(this.data, (success) => {
             isSuccess = !!success
-          }, true)
+          }, (err)=>{ console.error(err) }, true)
           if (isSuccess) {
             return
           }
@@ -129,6 +129,9 @@ export default class LOG {
       } else {
         this.handleUploadError()
       }
+    }, (err) => {
+      console.error(err)
+      window.log_report = false
     })
   }
 
