@@ -1,7 +1,7 @@
 import { getObj, getObjType, hasValue, reLog } from "./utils/index"
 import { LEVELS, TYPES, EMIT_ERROR } from "./constant/index"
 import { HTTP, LOG } from "./plugins/index"
-import { DEFAULT_SESSION_URL } from "./constant/config"
+import { DEFAULT_SESSION_URL, SESSION_STORAGE_KEY } from "./constant/config"
 
 export const defaultPluginConfig = {
   ajax: {
@@ -105,6 +105,14 @@ export class Monitor {
   // 初始化sessionId
   async initSessionId(options) {
     try {
+      if (this.sessionId) {
+        return
+      }
+      const storedSessionId = sessionStorage.getItem(SESSION_STORAGE_KEY)
+      if (storedSessionId) {
+        this.sessionId = storedSessionId
+        return
+      }
       // 使用 HTTP 插件发送请求
       const response = await this.plugins.http.customRequest({
         method: "GET",
@@ -114,6 +122,7 @@ export class Monitor {
       // 检查响应是否有效
       if (response && response.data?.sessionId) {
         this.sessionId = response.data?.sessionId
+        sessionStorage.setItem(SESSION_STORAGE_KEY, this.sessionId)
         console.log("SessionId 初始化成功:", this.sessionId)
       } else {
         throw new Error("无效的响应数据")

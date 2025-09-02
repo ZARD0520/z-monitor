@@ -1,5 +1,6 @@
 import { EMIT_ERROR } from "../constant/index"
 import { isFalse } from "../utils/index"
+import { SESSION_STORAGE_KEY } from '../constant/config'
 
 export default class LOG {
   constructor({ mt }, options) {
@@ -149,7 +150,8 @@ export default class LOG {
     console.warn(`SessionId 失效，尝试重新获取 (${this.SESSION_RETRY_COUNT}/${this.MAX_SESSION_RETRY})`)
 
     try {
-      await this.mt.initSessionId()
+      sessionStorage.removeItem(SESSION_STORAGE_KEY)
+      await this.mt.initSessionId(this.mt.options)
       this.SESSION_RETRY_COUNT = 0
     } catch (error) {
       console.error('重新获取 sessionId 失败:', error)
