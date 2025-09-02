@@ -26,8 +26,8 @@
     * 在ErrorHanding内部就可以放置项目代码了
 
 <!-- TO DO LIST -->
-* 全流程联调
-* 优化-性能采集
+* 兼容Next SSR
+* 优化-SPA路由性能采集
 * 优化-加密传输&&数据压缩
 * 支持sourcemap
 * 支持websocket
