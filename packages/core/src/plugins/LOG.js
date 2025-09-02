@@ -122,9 +122,9 @@ export default class LOG {
     if (!this.data.length) return
     const data = this.data.slice(0, this.data.length)
     const currentLen = data.length
-    this.mt.plugins.http.request(data, async (xhr) => {
+    this.mt.plugins.http.request(data, async (status) => {
       window.log_report = false
-      if ([200, 201].includes(xhr.status)) {
+      if (status) {
         this.data = this.data.slice(currentLen, this.data.length)
       } else {
         this.handleUploadError()
@@ -151,7 +151,6 @@ export default class LOG {
     try {
       await this.mt.initSessionId()
       this.SESSION_RETRY_COUNT = 0
-      this.uploadData()
     } catch (error) {
       console.error('重新获取 sessionId 失败:', error)
       this.mt.emit('error', EMIT_ERROR.SESSION_INIT_FAILED)

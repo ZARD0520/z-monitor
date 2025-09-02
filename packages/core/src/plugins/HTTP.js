@@ -92,6 +92,9 @@ export default class HTTP {
         result = this.reportWithBeacon(requestParams)
       } else if (this.shouldUseFetch()) {
         result = await this.reportWithFetch(requestParams)
+        if (result.ok) {
+          result = true
+        }
       } else {
         result = await this.customRequest({
           method: this.method,
@@ -99,6 +102,9 @@ export default class HTTP {
           headers: this.headers,
           data: requestParams
         })
+        if ([200, 201].includes(result.status)) {
+          result = true
+        }
       }
       done && done(result)
     } catch (err) {
