@@ -53,7 +53,7 @@ export default class LOG {
           let isSuccess = false
           httpPlugin.request(this.data, (success) => {
             isSuccess = !!success
-          }, (err)=>{ console.error(err) }, true)
+          }, (err)=>{ console.error(err) })
           if (isSuccess) {
             return
           }

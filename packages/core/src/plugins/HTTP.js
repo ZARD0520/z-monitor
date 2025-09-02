@@ -13,7 +13,7 @@ export default class HTTP {
     }
   }
   // data上传数据   done方法手动控制请求是否完毕
-  async request(data, done, errCatch, useBeacon = false) {
+  async request(data, done, errCatch) {
     if (window.log_report) {
       return
     }
@@ -28,10 +28,10 @@ export default class HTTP {
     }
     // 自定义处理
     if (this.customMethod) {
-      this.customMethod(data, done, errCatch, useBeacon);
+      this.customMethod(data, done, errCatch);
       return;
     }
-    this.report(data, done, errCatch, useBeacon);
+    this.report(data, done, errCatch);
   }
 
   // 检查beacon
@@ -76,7 +76,7 @@ export default class HTTP {
   }
 
   // 内置请求
-  async report(data, done, errCatch, useBeacon) {
+  async report(data, done, errCatch) {
     // 数据参数
     const requestParams = JSON.stringify({
       platform: this.mt.platformName,
@@ -88,7 +88,7 @@ export default class HTTP {
     try {
       let result
       // 不同请求方法处理
-      if (useBeacon) {
+      if (this.shouldUseBeacon(requestParams)) {
         result = this.reportWithBeacon(requestParams)
       } else if (this.shouldUseFetch()) {
         result = await this.reportWithFetch(requestParams)
