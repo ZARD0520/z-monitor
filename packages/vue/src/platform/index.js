@@ -51,7 +51,7 @@ function createRouterMonitor(router) {
       if (!isVue) {
         return console.error('检测当前不是vue app环境，必须调用register(Vue)(monitor)注册');
       }
-      console.log('Vue Router change');
+
       this.addCommonData('TYPES', 'ROUTER', {
         text: '页面跳转',
         value: 'ROUTER.CHANGE',

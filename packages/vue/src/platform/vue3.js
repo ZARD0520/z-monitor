@@ -1,22 +1,17 @@
-import { Plugin } from 'z-monitor-core'
-import { nextTick, provide } from 'vue'
+import { Plugin } from "z-monitor-core"
 
 export function register(Vue) {
   return function (mt, plugins = null) {
     if (!Vue) {
-      return console.error('必须要传入Vue')
+      return console.error("必须要传入Vue")
     }
     if (!mt) {
-      return console.error('必须要传入monitor实例')
+      return console.error("必须要传入monitor实例")
     }
-    mt.platformName = 'vue3'
+    mt.platformName = "vue3"
     mt.platform = Vue
     Vue.config.globalProperties.mt = mt
-    Vue.mixin({
-      created() {
-        provide('mt', mt)
-      }
-    })
+    Vue.provide("mt", mt)
     if (plugins) {
       for (let i in plugins) {
         if (!plugins[i]) {
@@ -33,20 +28,22 @@ export function register(Vue) {
 
 export class ERROR extends Plugin {
   init() {
-    const isVue3 = this.mt.platformName === 'vue3';
+    const isVue3 = this.mt.platformName === "vue3"
     if (!isVue3) {
-      return console.error('检测当前不是vue3 app环境，必须调用register(Vue)(monitor)注册');
+      return console.error(
+        "检测当前不是vue3 app环境，必须调用register(Vue)(monitor)注册"
+      )
     }
-    console.log('Vue Error init');
-    const Vue = this.mt.platform;
-    const _this = this;
+    console.log("Vue Error init")
+    const Vue = this.mt.platform
+    const _this = this
     // 异步调用，防止主进程覆盖重写的Vue.config.errorHandler方法
     setTimeout(() => {
-      const errorHandler = Vue.config.errorHandler;
+      const errorHandler = Vue.config.errorHandler
       Vue.config.errorHandler = function (...args) {
         if (!_this.isClose) {
-          const [err, vm, info] = args;
-          nextTick(() => {
+          const [err, vm, info] = args
+          Promise.resolve().then(() => {
             _this.send({
               type: _this.TYPES.CODE_ERROR,
               level: _this.LEVELS.ERROR,
@@ -54,13 +51,13 @@ export class ERROR extends Plugin {
                 message: err.message,
                 stack: err.stack,
                 hook: info,
-                vmName: vm.tag || vm.$vnode ? vm.$vnode.tag : '',
+                vmName: vm.tag || vm.$vnode ? vm.$vnode.tag : "",
               },
-            });
-          });
+            })
+          })
         }
-        return errorHandler && errorHandler.apply(this, args);
-      };
-    });
+        return errorHandler && errorHandler.apply(this, args)
+      }
+    })
   }
 }
