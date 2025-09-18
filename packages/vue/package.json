@@ -12,7 +12,7 @@
     "publish": "npm publish",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {
+  "devDependencies": {
     "z-monitor-core": "workspace:^"
   },
   "keywords": [],
@@ -20,11 +20,5 @@
   "license": "ISC",
   "publishConfig": {
     "access": "public"
-  },
-  "devDependencies": {
-    "vue": "3"
-  },
-  "peerDependencies": {
-    "vue": "3"
   }
 }
