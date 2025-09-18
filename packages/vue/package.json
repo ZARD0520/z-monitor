@@ -1,11 +1,13 @@
 {
   "name": "z-monitor-vue",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "z-monitor vue lib",
   "type": "module",
   "files": [
     "dist/*"
   ],
+  "main": "./dist/index.esm.min.js",
+  "module": "./dist/index.esm.min.js",
   "exports": {
     ".": {
       "import": "./dist/index.esm.min.js",

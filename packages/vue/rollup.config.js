@@ -15,7 +15,10 @@ export default defineConfig([
     plugins: [
       babel({
         exclude: 'node_modules/**', // 排除 node_modules
-        babelHelpers: 'bundled'
+        babelHelpers: 'bundled',
+        presets: [
+          ['@babel/preset-env', { targets: 'defaults' }]
+        ],
       }),
       resolve(),
       commonjs(),
