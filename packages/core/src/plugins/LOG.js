@@ -48,9 +48,9 @@ export default class LOG {
         return
       }
       if (this.data?.length) {
-        const httpPlugin = this.mt.plugins.http
+        /* const httpPlugin = this.mt.plugins.http */
         const saveData = JSON.stringify(this.data)
-        if (httpPlugin?.shouldUseBeacon(saveData)) {
+        /* if (httpPlugin?.shouldUseBeacon(saveData)) {
           let isSuccess = false
           httpPlugin.request(this.data, (success) => {
             isSuccess = !!success
@@ -58,7 +58,7 @@ export default class LOG {
           if (isSuccess) {
             return
           }
-        }
+        } */
         localStorage.setItem(this.STORAGE_KEY, saveData)
       }
     }
@@ -123,12 +123,12 @@ export default class LOG {
     if (!this.data.length) return
     const data = this.data.slice(0, this.data.length)
     const currentLen = data.length
-    this.mt.plugins.http.request(data, async (status) => {
+    this.mt.plugins.http.request(data, async (result) => {
       window.log_report = false
-      if (status) {
+      if ([200, 201].includes(result.status)) {
         this.data = this.data.slice(currentLen, this.data.length)
       } else {
-        this.handleUploadError()
+        this.handleUploadError(result.status)
       }
     }, (err) => {
       console.error(err)
@@ -160,8 +160,8 @@ export default class LOG {
   }
 
   // 处理上传错误
-  handleUploadError(res) {
-    if (res?.status === 403) {
+  handleUploadError(status) {
+    if (status === 403) {
       this.handleSessionError()
     } else {
       this.mt.emit('error', EMIT_ERROR.HTTP_FAIL)

@@ -6,7 +6,7 @@
   "files": [
     "dist/*"
   ],
-  "main": "./dist/index.esm.min.js",
+  "main": "./dist/index.cjs.min.js",
   "module": "./dist/index.esm.min.js",
   "exports": {
     ".": {
