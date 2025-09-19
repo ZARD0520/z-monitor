@@ -9,8 +9,7 @@ export default defineConfig([
     input: 'src/index.js',
     output: {
       file: 'dist/index.esm.min.js',
-      format: 'esm',
-      sourcemap: true,
+      format: 'esm'
     },
     plugins: [
       babel({
@@ -33,8 +32,7 @@ export default defineConfig([
     input: 'src/index.js',
     output: {
       file: 'dist/index.cjs.min.js',
-      format: 'cjs',
-      sourcemap: true,
+      format: 'cjs'
     },
     plugins: [
       babel({
