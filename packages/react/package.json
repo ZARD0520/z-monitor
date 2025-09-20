@@ -2,11 +2,20 @@
   "name": "z-monitor-react",
   "version": "1.0.3",
   "description": "z-monitor react lib",
-  "main": "dist/index.js",
   "type": "module",
   "files": [
     "dist/*"
   ],
+  "main": "./dist/index.cjs.min.js",
+  "module": "./dist/index.esm.min.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.min.js",
+      "require": "./dist/index.cjs.min.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
   "scripts": {
     "build": "rollup -c",
     "publish":"npm publish",
@@ -15,7 +24,10 @@
   "devDependencies": {
     "z-monitor-core": "workspace:^"
   },
-  "keywords": [],
+  "keywords": [
+    "monitor",
+    "react"
+  ],
   "author": "",
   "license": "ISC",
   "publishConfig": {
