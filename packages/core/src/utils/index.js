@@ -84,11 +84,11 @@ export function hasMonitorAttribute(element, attrName) {
   let current = element
   while (current) {
     if (current.hasAttribute(attrName)) {
-      return true
+      return current
     }
     current = current.parentElement
   }
-  return false
+  return null
 }
 
 // 埋点防抖时长识别

@@ -19,7 +19,7 @@ export const defaultPluginConfig = {
   },
   click: {
     isPartial: false,
-    globalDebounce: false,
+    globalDebounce: undefined,
     partialAttribute: "data-monitor",
     debounceAttribute: "data-monitor-debounce",
   },

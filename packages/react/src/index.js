@@ -72,7 +72,8 @@ export default function createMonitor(React, { history } = {}, configs = {}, plu
         key: options.key,
         plugins: {
           http: mergePluginConfig.http,
-          log: mergePluginConfig.log
+          log: mergePluginConfig.log,
+          click: mergePluginConfig.click
         }
       };
 

@@ -25,18 +25,19 @@ export default class CLICK extends Plugin {
         this.options
 
       if (!isNormalTag(target)) return
-      if (isPartial && !hasMonitorAttribute(target, partialAttribute)) {
+      const monitorTarget = hasMonitorAttribute(target, partialAttribute)
+      if (isPartial && !monitorTarget) {
         return
       }
 
-      if (this.debounceMap.has(target)) {
+      if (this.debounceMap.has(monitorTarget)) {
         return
       }
 
       const debounceMs =
-        globalDebounce || getElementDebounce(target, debounceAttribute)
+        globalDebounce || getElementDebounce(monitorTarget, debounceAttribute)
       if (debounceMs) {
-        addToDebounceMap(target, debounceMs, this.debounceMap)
+        addToDebounceMap(monitorTarget, debounceMs, this.debounceMap)
       }
 
       const path = getPath(event)

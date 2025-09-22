@@ -53,7 +53,8 @@ export default {
         url: options.url,
         plugins: {
           http: mergePluginConfig.http,
-          log: mergePluginConfig.log
+          log: mergePluginConfig.log,
+          click: mergePluginConfig.click
         }
       }
 
