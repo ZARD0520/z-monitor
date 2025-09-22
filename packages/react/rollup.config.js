@@ -13,9 +13,12 @@ export default defineConfig([
     },
     plugins: [
       babel({
-        exclude: 'node_modules/**', // 排除 node_modules
         babelHelpers: 'bundled',
-        presets: ['@babel/preset-react']
+        presets: ['@babel/preset-react'],
+        plugins: [
+          '@babel/plugin-proposal-nullish-coalescing-operator',
+          '@babel/plugin-proposal-optional-chaining'
+        ]
       }),
       resolve(),
       commonjs(),
@@ -34,9 +37,12 @@ export default defineConfig([
     },
     plugins: [
       babel({
-        exclude: 'node_modules/**', // 排除 node_modules
         babelHelpers: 'bundled',
-        presets: ['@babel/preset-react']
+        presets: ['@babel/preset-react'],
+        plugins: [
+          '@babel/plugin-proposal-nullish-coalescing-operator',
+          '@babel/plugin-proposal-optional-chaining'
+        ]
       }),
       resolve(),
       commonjs(),
