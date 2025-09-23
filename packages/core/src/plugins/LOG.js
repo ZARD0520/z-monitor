@@ -151,8 +151,9 @@ export default class LOG {
 
     try {
       sessionStorage.removeItem(SESSION_STORAGE_KEY)
-      await this.mt.initSessionId(this.mt.options)
+      await this.mt.initSessionId(this.mt.options, true)
       this.SESSION_RETRY_COUNT = 0
+      this.uploadData()
     } catch (error) {
       console.error('重新获取 sessionId 失败:', error)
       this.mt.emit('error', EMIT_ERROR.SESSION_INIT_FAILED)

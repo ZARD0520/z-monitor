@@ -103,15 +103,17 @@ export class Monitor {
     }
   }
   // 初始化sessionId
-  async initSessionId(options) {
+  async initSessionId(options, isRefresh = false) {
     try {
-      if (this.sessionId) {
-        return
-      }
-      const storedSessionId = sessionStorage.getItem(SESSION_STORAGE_KEY)
-      if (storedSessionId) {
-        this.sessionId = storedSessionId
-        return
+      if(!isRefresh) {
+        if (this.sessionId) {
+          return
+        }
+        const storedSessionId = sessionStorage.getItem(SESSION_STORAGE_KEY)
+        if (storedSessionId) {
+          this.sessionId = storedSessionId
+          return
+        }
       }
       // 使用 HTTP 插件发送请求
       const response = await this.plugins.http.customRequest({
@@ -135,7 +137,7 @@ export class Monitor {
       // 如果重试次数未达到最大值，则继续重试
       if (this.retryCount < this.MAX_RETRY_COUNT) {
         console.log("重试中...")
-        await this.initSessionId(options) // 递归调用
+        await this.initSessionId(options, true) // 递归调用
       } else {
         // 重试次数达到最大值，关闭埋点功能
         console.error("重试次数达到上限，关闭埋点功能")
