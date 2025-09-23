@@ -32,7 +32,7 @@ const OPTIONAL_PLUGINS = {
   pagePerformance: null
 }
 
-export default function createMonitor(React, { history } = {}, configs = {}, pluginConfig = {}) {
+export default function useMonitor(React, { history } = {}, configs = {}, pluginConfig = {}) {
   // 初始化监控实例
   const monitor = React.useRef(null)
   const MonitorWrapper = React.useRef(({ children }) => <>{children}</>)

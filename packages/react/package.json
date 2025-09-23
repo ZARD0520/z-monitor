@@ -15,6 +15,7 @@
     },
     "./package.json": "./package.json"
   },
+  "types": "type.d.ts",
   "sideEffects": false,
   "scripts": {
     "build": "rollup -c",
