@@ -14,7 +14,7 @@
 
 ## 📦 安装
 
-使用 NPM/YARD/PNPM(推荐）
+使用 NPM/YARN/PNPM(推荐）
 
 ```javascript
 // 选择你的包管理器
