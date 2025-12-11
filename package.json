@@ -49,11 +49,11 @@
     "terser": "^5.36.0"
   },
   "lint-staged": {
-    "*.{js,jsx}": [
+    "**/*.{js,jsx}": [
       "eslint --fix",
       "prettier --write"
     ],
-    "*.{json,md}": [
+    "**/*.{json,md}": [
       "prettier --write"
     ]
   }
