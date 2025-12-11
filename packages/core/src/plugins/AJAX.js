@@ -113,7 +113,7 @@ export default class AJAX extends Plugin {
       }
 
       const startTime = Date.now()
-      const method = (init.method || 'GET').toUpperCase()
+      // const method = (init.method || 'GET').toUpperCase()
       const body = init.body || null
 
       let fetchData = { url: `${url} [fetch]`, interval: '' }

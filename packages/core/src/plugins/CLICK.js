@@ -48,7 +48,7 @@ export default class CLICK extends Plugin {
         },
       })
     } catch (e) {
-      this.mt.emit('error', EMIT_ERROR.PLUGIN_ERROR)
+      this.mt.emit('error', EMIT_ERROR.PLUGIN_ERROR, e)
       this.destroy()
     }
   }

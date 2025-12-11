@@ -7,7 +7,7 @@ export const defaultPluginConfig = {
   ajax: {
     req: true, // 是否开启对请求参数的记录
     excludeUrls: [],
-    customMethod: (data, [ajax]) => {
+    customMethod: (data /* , [ajax] */) => {
       return data
     }, // 自定义处理ajax数据方法
   },

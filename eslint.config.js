@@ -5,16 +5,21 @@ import prettier from 'eslint-config-prettier'
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   {
-    ignores: ['node_modules/', 'packages/**/dist/'],
+    ignores: ['node_modules/', 'packages/**/dist/', '**/*.d.ts'],
   },
   {
-    files: ['**/*.{js,jsx}'],
+    files: ['**/*.{js,jsx,ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2020,
       sourceType: 'module',
       globals: {
         ...globals.browser,
         ...globals.node,
+      },
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
       },
     },
     rules: {

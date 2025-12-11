@@ -11,6 +11,7 @@ export function register(React, mt) {
   mt.platformName = 'React'
   mt.platform = React
 
+  // eslint-disable-next-line no-unused-vars
   return function (WrappedComponent) {
     const ErrorBoundary = mt.plugins.platform_error?.ErrorBoundary
     return function (props) {
@@ -59,7 +60,7 @@ export class ERROR extends Plugin {
       }
 
       static getDerivedStateFromError(error) {
-        return { hasError: true }
+        return { hasError: true, error }
       }
 
       componentDidCatch(error, errorInfo) {

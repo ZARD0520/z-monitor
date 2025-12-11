@@ -4,7 +4,6 @@ export default class USERINFO extends Plugin {
   init(options) {
     this.options = options
     console.log('init userinfo')
-    this.getUserInfo = this.getUserInfo
   }
   async getUserInfo() {
     if (!this.options.getData) {
