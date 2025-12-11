@@ -1,7 +1,7 @@
 import { isFalse } from '../utils/index'
 export default class HTTP {
   constructor({ mt }) {
-    this.mt = mt;
+    this.mt = mt
   }
   init(options) {
     this.url = options.url + '/api/monitor/add'
@@ -20,18 +20,18 @@ export default class HTTP {
     window.log_report = true
     // 数据预处理
     if (this.mt.beforeReport) {
-      let _data = this.mt.beforeReport(data);
+      let _data = this.mt.beforeReport(data)
       if (isFalse(_data)) {
-        return;
+        return
       }
-      data = _data;
+      data = _data
     }
     // 自定义处理
     if (this.customMethod) {
-      this.customMethod(data, done, errCatch);
-      return;
+      this.customMethod(data, done, errCatch)
+      return
     }
-    this.report(data, done, errCatch);
+    this.report(data, done, errCatch)
   }
 
   // 检查beacon
@@ -67,11 +67,11 @@ export default class HTTP {
       body: data,
       keepalive: true,
       signal: AbortSignal.timeout(5000),
-      priority: 'low'
+      priority: 'low',
     })
     return {
       status: response.status,
-      responseText: await response.text()
+      responseText: await response.text(),
     }
   }
 
@@ -82,7 +82,7 @@ export default class HTTP {
       platform: this.mt.platformName,
       projectId: this.mt.key,
       sessionId: this.mt.sessionId,
-      data
+      data,
     })
 
     try {
@@ -98,7 +98,7 @@ export default class HTTP {
           method: this.method,
           url: this.url,
           headers: this.headers,
-          data: requestParams
+          data: requestParams,
         })
       }
       done && done(result)
@@ -111,19 +111,19 @@ export default class HTTP {
   customRequest({ method = 'GET', url, params = {}, data = null, headers = {} }) {
     return new Promise((resolve, reject) => {
       // 创建 XMLHttpRequest 对象
-      const xhr = new XMLHttpRequest();
+      const xhr = new XMLHttpRequest()
 
       // 拼接 URL 参数（适用于 GET 请求）
-      const queryString = new URLSearchParams(params).toString();
-      const requestUrl = queryString ? `${url}?${queryString}` : url;
+      const queryString = new URLSearchParams(params).toString()
+      const requestUrl = queryString ? `${url}?${queryString}` : url
 
       // 初始化请求
-      xhr.open(method, requestUrl, true);
+      xhr.open(method, requestUrl, true)
 
       // 设置请求头
       if (headers) {
         for (const [key, value] of Object.entries(headers)) {
-          xhr.setRequestHeader(key, value);
+          xhr.setRequestHeader(key, value)
         }
       }
 
@@ -132,42 +132,42 @@ export default class HTTP {
         if (xhr.status >= 200 && xhr.status < 300) {
           // 请求成功，解析响应数据
           try {
-            const response = JSON.parse(xhr.responseText);
-            resolve({ status: xhr.status, data: response, error: null });
+            const response = JSON.parse(xhr.responseText)
+            resolve({ status: xhr.status, data: response, error: null })
           } catch (error) {
-            resolve({ status: xhr.status, data: null, error }); // 如果响应不是 JSON，直接返回原始数据
+            resolve({ status: xhr.status, data: null, error }) // 如果响应不是 JSON，直接返回原始数据
           }
         } else {
           // 请求失败，返回错误信息
-          reject(new Error(`Request failed with status ${xhr.status}: ${xhr.statusText}`));
+          reject(new Error(`Request failed with status ${xhr.status}: ${xhr.statusText}`))
         }
-      };
+      }
 
       // 监听请求错误事件
       xhr.onerror = function () {
-        reject(new Error('Network error: Failed to send request'));
-      };
+        reject(new Error('Network error: Failed to send request'))
+      }
 
       // 监听请求超时事件
       xhr.ontimeout = function () {
-        reject(new Error('Request timeout'));
-      };
+        reject(new Error('Request timeout'))
+      }
 
       // 发送请求
       if (data) {
         // 如果是 POST 请求，发送请求体数据
         if (headers['Content-Type'] === 'application/json') {
-          xhr.send(typeof data === 'string' ? data : JSON.stringify(data)); // 发送 JSON 数据
+          xhr.send(typeof data === 'string' ? data : JSON.stringify(data)) // 发送 JSON 数据
         } else {
-          const formData = new FormData();
+          const formData = new FormData()
           for (const [key, value] of Object.entries(data)) {
-            formData.append(key, value);
+            formData.append(key, value)
           }
-          xhr.send(formData); // 发送 FormData
+          xhr.send(formData) // 发送 FormData
         }
       } else {
-        xhr.send(); // GET 请求不需要发送请求体
+        xhr.send() // GET 请求不需要发送请求体
       }
-    });
+    })
   }
 }

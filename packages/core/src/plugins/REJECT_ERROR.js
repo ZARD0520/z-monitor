@@ -1,16 +1,16 @@
-import { Plugin } from '../plugin.js';
+import { Plugin } from '../plugin.js'
 
 export default class REJECT_ERROR extends Plugin {
   init(options) {
-    console.log('reject init');
-    this.options = options;
-    this.errorEvent = (e) => this.handleError(e);
-    window.addEventListener('unhandledrejection', (e) => this.handleError(e), true);
+    console.log('reject init')
+    this.options = options
+    this.errorEvent = (e) => this.handleError(e)
+    window.addEventListener('unhandledrejection', (e) => this.handleError(e), true)
   }
   handleError(event) {
     // 普通异步错误
-    const { reason = {} } = event;
-    const { message = null, stack = null } = reason;
+    const { reason = {} } = event
+    const { message = null, stack = null } = reason
     this.send({
       type: this.TYPES.CODE_ERROR,
       level: this.LEVELS.ERROR,
@@ -19,9 +19,9 @@ export default class REJECT_ERROR extends Plugin {
         stack,
         targetType: '异步错误',
       },
-    });
+    })
   }
   destroy() {
-    window.removeEventListener('unhandledrejection', this.errorEvent);
+    window.removeEventListener('unhandledrejection', this.errorEvent)
   }
 }

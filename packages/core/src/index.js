@@ -1,7 +1,7 @@
-import { getObj, getObjType, hasValue, reLog } from "./utils/index"
-import { LEVELS, TYPES, EMIT_ERROR } from "./constant/index"
-import { HTTP, LOG } from "./plugins/index"
-import { DEFAULT_SESSION_URL, SESSION_STORAGE_KEY } from "./constant/config"
+import { getObj, getObjType, hasValue, reLog } from './utils/index'
+import { LEVELS, TYPES, EMIT_ERROR } from './constant/index'
+import { HTTP, LOG } from './plugins/index'
+import { DEFAULT_SESSION_URL, SESSION_STORAGE_KEY } from './constant/config'
 
 export const defaultPluginConfig = {
   ajax: {
@@ -12,7 +12,7 @@ export const defaultPluginConfig = {
     }, // 自定义处理ajax数据方法
   },
   log: {
-    type: "time", // type为time时，用时间来控制上传频率；type为num时，则用采集次数控制；type为hybrid时，两者同时控制
+    type: 'time', // type为time时，用时间来控制上传频率；type为num时，则用采集次数控制；type为hybrid时，两者同时控制
     time: 30 * 1000, // 隔30s上传一次日志
     MAX_HTTP_FAIL: 3, // 超过3次失败关闭监控，服务端接口可能错误
     customMethod: null /* (item) => { return item } */,
@@ -20,15 +20,15 @@ export const defaultPluginConfig = {
   click: {
     isPartial: false,
     globalDebounce: undefined,
-    partialAttribute: "data-monitor",
-    debounceAttribute: "data-monitor-debounce",
+    partialAttribute: 'data-monitor',
+    debounceAttribute: 'data-monitor-debounce',
   },
   http: {
     isCustomRequest: false,
     requestConfig: {
-      method: "POST", // 请求类型：POST、GET等
+      method: 'POST', // 请求类型：POST、GET等
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       }, // 请求头配置
     },
     customMethod: null /* (data, done) => { } */, // 自定义请求，data为采集上报的参数数据
@@ -39,24 +39,18 @@ export const defaultPluginConfig = {
   videoRecord: {
     waitTime: 2000, // 延迟多久上报，采集报错后的内容
     checkoutEveryNth: 300, // 每N个数据做切片
-    customRecordId: "",
+    customRecordId: '',
   },
   pagePerformance: {
-    entryTypes: [
-      "paint",
-      "resource",
-      "longtask",
-      "first-input",
-      "largest-contentful-paint",
-    ],
+    entryTypes: ['paint', 'resource', 'longtask', 'first-input', 'largest-contentful-paint'],
   },
 }
 
 export class Monitor {
   constructor(options) {
-    console.log("Monitor加载...")
+    console.log('Monitor加载...')
     if (!options.key) {
-      console.error("没有设置key值，请传递一个唯一的key值保证功能使用")
+      console.error('没有设置key值，请传递一个唯一的key值保证功能使用')
       return
     }
     this.key = options.key
@@ -86,7 +80,7 @@ export class Monitor {
     this.init(options)
   }
   async init(options) {
-    console.log("Monitor init")
+    console.log('Monitor init')
     // 初始化全局需要的数据
     this.initGlobal()
     // 初始化基础数据
@@ -105,7 +99,7 @@ export class Monitor {
   // 初始化sessionId
   async initSessionId(options, isRefresh = false) {
     try {
-      if(!isRefresh) {
+      if (!isRefresh) {
         if (this.sessionId) {
           return
         }
@@ -117,17 +111,17 @@ export class Monitor {
       }
       // 使用 HTTP 插件发送请求
       const response = await this.plugins.http.customRequest({
-        method: "GET",
-        url: (options.url || DEFAULT_SESSION_URL) + "/api/session/id",
+        method: 'GET',
+        url: (options.url || DEFAULT_SESSION_URL) + '/api/session/id',
       })
 
       // 检查响应是否有效
       if (response && response.data?.sessionId) {
         this.sessionId = response.data?.sessionId
         sessionStorage.setItem(SESSION_STORAGE_KEY, this.sessionId)
-        console.log("SessionId 初始化成功:", this.sessionId)
+        console.log('SessionId 初始化成功:', this.sessionId)
       } else {
-        throw new Error("无效的响应数据")
+        throw new Error('无效的响应数据')
       }
     } catch (error) {
       // 请求失败，递增重试计数器
@@ -136,14 +130,14 @@ export class Monitor {
 
       // 如果重试次数未达到最大值，则继续重试
       if (this.retryCount < this.MAX_RETRY_COUNT) {
-        console.log("重试中...")
+        console.log('重试中...')
         await this.initSessionId(options, true) // 递归调用
       } else {
         // 重试次数达到最大值，关闭埋点功能
-        console.error("重试次数达到上限，关闭埋点功能")
+        console.error('重试次数达到上限，关闭埋点功能')
         this.close() // 关闭埋点
-        this.emit("error", EMIT_ERROR.SESSION_FAILED)
-        throw new Error("初始失败：无法获取 sessionId")
+        this.emit('error', EMIT_ERROR.SESSION_FAILED)
+        throw new Error('初始失败：无法获取 sessionId')
       }
     }
   }
@@ -154,22 +148,19 @@ export class Monitor {
   }
   // 初始化选项
   initOptions() {
-    this.appName = this.key + "-Monitor"
+    this.appName = this.key + '-Monitor'
   }
   // 初始化基础信息
   initBaseInfo() {
     const timeZoneOffset = new Date().getTimezoneOffset()
     const offsetHours = Math.floor(Math.abs(timeZoneOffset) / 60)
-    const offsetDirection = timeZoneOffset > 0 ? "-" : "+"
+    const offsetDirection = timeZoneOffset > 0 ? '-' : '+'
     const timezone = offsetDirection + offsetHours
     const networkInfo =
-      navigator.connection ||
-      navigator.mozConnection ||
-      navigator.webkitConnection ||
-      {}
+      navigator.connection || navigator.mozConnection || navigator.webkitConnection || {}
     this.baseInfo = {
       timezone,
-      language: navigator.language || navigator.userLanguage || "en",
+      language: navigator.language || navigator.userLanguage || 'en',
       deviceInfo: {
         userAgent: navigator.userAgent,
         networkInfo: {
@@ -184,31 +175,28 @@ export class Monitor {
   }
   initClass() {
     // 注册日志插件
-    this.pluginCall("log", LOG)
+    this.pluginCall('log', LOG)
     // 注册 http 插件
-    this.pluginCall("http", HTTP)
+    this.pluginCall('http', HTTP)
   }
   // 判断该插件是否是内部插件
   isInnerPlugins(name) {
-    return ["log", "http"].includes(name)
+    return ['log', 'http'].includes(name)
   }
   // 注册插件
   pluginCall(name, module) {
     try {
       let options = getObj(this.options.plugins, name)
-      this.plugins[name] = new module(
-        { mt: this, options: this.options, name },
-        options
-      )
+      this.plugins[name] = new module({ mt: this, options: this.options, name }, options)
       // 初始化插件
       const plugin = this.plugins[name]
-      if (name === "http") {
+      if (name === 'http') {
         options = { ...options, url: this.options.url }
       }
       plugin.init && plugin.init(options)
     } catch (e) {
-      console.warn("插件注册错误", name, e)
-      this.emit("error", EMIT_ERROR.PLUGIN_ERROR)
+      console.warn('插件注册错误', name, e)
+      this.emit('error', EMIT_ERROR.PLUGIN_ERROR)
     }
   }
   // 注销插件
@@ -268,12 +256,12 @@ export class Monitor {
     if (len) {
       for (let i = 0; i <= len - 1; i++) {
         let temp = this.commonParams[i](total)
-        if (getObjType(total, "object")) {
+        if (getObjType(total, 'object')) {
           reLog(
             `setCommonConfig 传递函数需要\n${this.commonParams[
               i
             ].toString()}\n返回值不是 object 类型`,
-            "warn"
+            'warn'
           )
           continue
         }
@@ -286,11 +274,11 @@ export class Monitor {
    * 记录插件的回调函数，方便外部插件扩展公共配置
    */
   setCommonConfig(cb) {
-    if (getObjType(cb, "function")) {
+    if (getObjType(cb, 'function')) {
       this.commonParams.push(cb)
       return
     }
-    reLog("setCommonConfig 方法必须要传递函数类型", "error")
+    reLog('setCommonConfig 方法必须要传递函数类型', 'error')
   }
   // 调用监听事件
   emit(type, value) {
@@ -312,4 +300,4 @@ export class Monitor {
   }
 }
 
-export * from "./plugin"
+export * from './plugin'

@@ -8,14 +8,4 @@ import HTTP from './HTTP.js'
 import LOG from './LOG.js'
 import VIDEO_RECORD from './VIDEO_RECORD.js'
 
-export {
-  CLICK,
-  ERROR,
-  REJECT_ERROR,
-  AJAX,
-  USERINFO,
-  COUNT,
-  HTTP,
-  LOG,
-  VIDEO_RECORD
-}
+export { CLICK, ERROR, REJECT_ERROR, AJAX, USERINFO, COUNT, HTTP, LOG, VIDEO_RECORD }

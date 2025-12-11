@@ -6,23 +6,22 @@ import {
   getElementDebounce,
   getNormalizedPath,
   addToDebounceMap,
-} from "../utils/index.js"
-import { Plugin } from "../plugin.js"
-import { EMIT_ERROR } from "../constant/index.js"
+} from '../utils/index.js'
+import { Plugin } from '../plugin.js'
+import { EMIT_ERROR } from '../constant/index.js'
 
 export default class CLICK extends Plugin {
   init(options) {
-    console.log("Click init")
+    console.log('Click init')
     this.options = options
     this.debounceMap = new Map()
     this.clickEvent = (e) => this.handleClick(e)
-    window.addEventListener("mouseup", this.clickEvent)
+    window.addEventListener('mouseup', this.clickEvent)
   }
   handleClick(event) {
     try {
       const target = event.target
-      const { isPartial, partialAttribute, debounceAttribute, globalDebounce } =
-        this.options
+      const { isPartial, partialAttribute, debounceAttribute, globalDebounce } = this.options
 
       if (!isNormalTag(target)) return
       const monitorTarget = hasMonitorAttribute(target, partialAttribute)
@@ -34,8 +33,7 @@ export default class CLICK extends Plugin {
         return
       }
 
-      const debounceMs =
-        globalDebounce || getElementDebounce(monitorTarget, debounceAttribute)
+      const debounceMs = globalDebounce || getElementDebounce(monitorTarget, debounceAttribute)
       if (debounceMs) {
         addToDebounceMap(monitorTarget, debounceMs, this.debounceMap)
       }
@@ -50,12 +48,12 @@ export default class CLICK extends Plugin {
         },
       })
     } catch (e) {
-      this.mt.emit("error", EMIT_ERROR.PLUGIN_ERROR)
+      this.mt.emit('error', EMIT_ERROR.PLUGIN_ERROR)
       this.destroy()
     }
   }
   destroy() {
-    this.debounceMap.clear();
-    window.removeEventListener("mouseup", this.clickEvent)
+    this.debounceMap.clear()
+    window.removeEventListener('mouseup', this.clickEvent)
   }
 }

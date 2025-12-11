@@ -1,20 +1,20 @@
-import { Plugin } from '../plugin.js';
+import { Plugin } from '../plugin.js'
 
 export default class COUNT extends Plugin {
   init() {
-    console.log('COUNT init');
+    console.log('COUNT init')
     if (!this.isClose) {
       this.addCommonData('TYPES', 'COUNT', {
         text: '点击统计',
         value: 'UI.COUNT',
-      });
+      })
       this.addCommonData('TYPES', 'STORY', {
         text: '用户故事',
         value: 'UI.STORY',
-      });
-      this.mt.startRecord = this.startRecord;
-      this.mt.endRecord = this.endRecord;
-      this.mt.count = this.count;
+      })
+      this.mt.startRecord = this.startRecord
+      this.mt.endRecord = this.endRecord
+      this.mt.count = this.count
     }
   }
   startRecord(name, _data = {}, time = null) {
@@ -27,11 +27,11 @@ export default class COUNT extends Plugin {
         isStory: 1,
         ..._data,
       },
-    };
-    if (time) {
-      params.time = time;
     }
-    this.send(params);
+    if (time) {
+      params.time = time
+    }
+    this.send(params)
   }
   endRecord(name) {
     this.send({
@@ -42,7 +42,7 @@ export default class COUNT extends Plugin {
         storyEnd: 1,
         isStory: 1,
       },
-    });
+    })
   }
   count(name, _data = {}) {
     this.send({
@@ -53,12 +53,12 @@ export default class COUNT extends Plugin {
         isStory: 0,
         ..._data,
       },
-    });
+    })
   }
   destroy() {
     // 清空函数，不上传埋点，不直接清空是防止客户端报错
-    this.mt.startRecord = () => {};
-    this.mt.endRecord = () => {};
-    this.mt.count = () => {};
+    this.mt.startRecord = () => {}
+    this.mt.endRecord = () => {}
+    this.mt.count = () => {}
   }
 }

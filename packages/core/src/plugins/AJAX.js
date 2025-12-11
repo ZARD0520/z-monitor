@@ -8,7 +8,7 @@ export default class AJAX extends Plugin {
     this.finalOptions = {
       req: true,
       res: false,
-      ...options
+      ...options,
     }
 
     this.listenXhr()
@@ -55,9 +55,9 @@ export default class AJAX extends Plugin {
                 type: _this.TYPES.AJAX_FAIL,
                 level: _this.LEVELS.ERROR,
                 time: this.startTime, // 用ajax开始时间，而不是响应后时间
-                data
+                data,
               },
-              this,
+              this
             )
             return
           }
@@ -74,7 +74,7 @@ export default class AJAX extends Plugin {
                   time: this.startTime, // 用ajax开始时间，而不是响应后时间
                   data,
                 },
-                this,
+                this
               )
             } else {
               _this.send(
@@ -84,14 +84,14 @@ export default class AJAX extends Plugin {
                   time: this.startTime, // 用ajax开始时间，而不是响应后时间
                   data,
                 },
-                this,
+                this
               )
             }
           }
         })
       }
       return send.apply(this, rest)
-    };
+    }
   }
 
   listenFetch() {
@@ -136,14 +136,14 @@ export default class AJAX extends Plugin {
             type: _this.TYPES.AJAX_SUCCESS,
             level: _this.LEVELS.INFO,
             time: startTime,
-            data: fetchData
+            data: fetchData,
           })
         } else {
           _this.send({
             type: _this.TYPES.AJAX_FAIL,
             level: _this.LEVELS.ERROR,
             time: startTime,
-            data: fetchData
+            data: fetchData,
           })
         }
         return response
@@ -154,14 +154,14 @@ export default class AJAX extends Plugin {
           type: _this.TYPES.AJAX_FAIL,
           level: _this.LEVELS.ERROR,
           time: startTime,
-          data: fetchData
+          data: fetchData,
         })
-        throw err;
+        throw err
       }
     }
   }
 }
 
 function isExcludeUrl(url, excludeUrls) {
-  return excludeUrls?.some(excludeUrl => url?.includes(excludeUrl))
+  return excludeUrls?.some((excludeUrl) => url?.includes(excludeUrl))
 }

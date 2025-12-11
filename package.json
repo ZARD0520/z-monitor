@@ -11,7 +11,13 @@
     "build": "pnpm -R run build",
     "publish:vue": "pnpm -F z-monitor-vue publish",
     "publish:react": "pnpm -F z-monitor-react publish",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "validate": "npm run lint && npm run format:check"
   },
   "keywords": [],
   "author": "zard",
@@ -27,9 +33,28 @@
     "@babel/plugin-proposal-optional-chaining": "^7.21.0",
     "@babel/preset-env": "^7.25.8",
     "@babel/preset-react": "^7.25.9",
+    "@commitlint/cli": "^20.2.0",
+    "@commitlint/config-conventional": "^20.2.0",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-terser": "^0.4.4",
+    "eslint": "^9.39.1",
+    "@eslint/js": "^9.20.0",
+    "globals": "^16.0.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.4",
     "rollup": "^4.24.0",
     "terser": "^5.36.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
   }
 }

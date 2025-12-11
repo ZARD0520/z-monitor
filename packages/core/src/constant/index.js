@@ -1,4 +1,4 @@
-export const EVENTS = ['console', 'dom', 'event'];
+export const EVENTS = ['console', 'dom', 'event']
 
 export const TYPES = {
   CLICK: {
@@ -43,9 +43,9 @@ export const TYPES = {
   },
   PERFORMANCE: {
     value: 'PERFORMANCE',
-    text: '页面性能'
-  }
-};
+    text: '页面性能',
+  },
+}
 
 export const LEVELS = {
   ERROR: {
@@ -60,11 +60,11 @@ export const LEVELS = {
     value: 3,
     text: '正常行为',
   }, // 正常记录
-};
+}
 
 // emit error type
 export const EMIT_ERROR = {
   HTTP_FAIL: 'HTTP_FAIL', // 日志发送失败
   PLUGIN_ERROR: 'PLUGIN_ERROR', // 插件错误
-  SESSION_FAILED: 'SESSION_FAILED' // sessionId获取失败或过期
-};
+  SESSION_FAILED: 'SESSION_FAILED', // sessionId获取失败或过期
+}

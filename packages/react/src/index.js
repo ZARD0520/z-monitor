@@ -7,7 +7,7 @@ import {
   AJAX,
   USERINFO,
   COUNT,
-  VIDEO_RECORD
+  VIDEO_RECORD,
 } from 'z-monitor-core/plugins'
 import { DEFAULT_TRACK_URL } from 'z-monitor-core/constant/config'
 
@@ -15,21 +15,21 @@ const DEFAULT_CONFIG = {
   url: DEFAULT_TRACK_URL,
   platform: 'react',
   key: 'z-app',
-  trackList: ['userInfo']
+  trackList: ['userInfo'],
 }
 
 const CORE_PLUGINS = {
   click: CLICK,
   ERROR: ERROR,
   reject_error: REJECT_ERROR,
-  count: COUNT
+  count: COUNT,
 }
 
 const OPTIONAL_PLUGINS = {
   ajax: AJAX,
   videoRecord: VIDEO_RECORD,
   userInfo: USERINFO,
-  pagePerformance: null
+  pagePerformance: null,
 }
 
 export default function useMonitor(React, { history } = {}, configs = {}, pluginConfig = {}) {
@@ -40,31 +40,36 @@ export default function useMonitor(React, { history } = {}, configs = {}, plugin
   // 合并配置
   const options = {
     ...DEFAULT_CONFIG,
-    ...configs
+    ...configs,
   }
 
-  const { register, ERROR: REACT_ERROR, RouterMonitorPlugin, useRouterMonitor, PerformanceMonitorPlugin } = usePlatform(options.platform)
+  const {
+    register,
+    ERROR: REACT_ERROR,
+    RouterMonitorPlugin,
+    useRouterMonitor,
+    PerformanceMonitorPlugin,
+  } = usePlatform(options.platform)
 
   // 未存在实例，初始化
   if (!monitor.current) {
     // 初始化监控系统
     try {
-      const mergePluginConfig = {};
+      const mergePluginConfig = {}
       for (const key in defaultPluginConfig) {
         mergePluginConfig[key] = {
           ...defaultPluginConfig[key],
-          ...pluginConfig[key]
-        };
+          ...pluginConfig[key],
+        }
       }
 
       // 性能监控配置
       const performanceConfig =
-        options.trackList?.includes('pagePerformance') &&
-          mergePluginConfig?.pagePerformance
+        options.trackList?.includes('pagePerformance') && mergePluginConfig?.pagePerformance
           ? {
-            enabled: true,
-            entryTypes: mergePluginConfig.pagePerformance.entryTypes
-          }
+              enabled: true,
+              entryTypes: mergePluginConfig.pagePerformance.entryTypes,
+            }
           : null
 
       const mergeConfig = {
@@ -73,37 +78,37 @@ export default function useMonitor(React, { history } = {}, configs = {}, plugin
         plugins: {
           http: mergePluginConfig.http,
           log: mergePluginConfig.log,
-          click: mergePluginConfig.click
-        }
-      };
+          click: mergePluginConfig.click,
+        },
+      }
 
-      const monitorInstance = new Monitor(mergeConfig);
+      const monitorInstance = new Monitor(mergeConfig)
 
-      const withMt = register(React, monitorInstance);
+      const withMt = register(React, monitorInstance)
 
       // 注册核心插件
       Object.entries(CORE_PLUGINS).forEach(([name, plugin]) => {
-        monitorInstance.pluginCall(name, plugin);
-      });
+        monitorInstance.pluginCall(name, plugin)
+      })
 
       // 注册平台错误处理插件
-      monitorInstance.pluginCall('platform_error', REACT_ERROR);
+      monitorInstance.pluginCall('platform_error', REACT_ERROR)
       // 注册可选插件
-      options.trackList?.forEach(pluginName => {
+      options.trackList?.forEach((pluginName) => {
         if (OPTIONAL_PLUGINS[pluginName] && mergePluginConfig[pluginName]) {
-          mergeConfig.plugins[pluginName] = mergePluginConfig[pluginName];
-          monitorInstance.pluginCall(pluginName, OPTIONAL_PLUGINS[pluginName]);
+          mergeConfig.plugins[pluginName] = mergePluginConfig[pluginName]
+          monitorInstance.pluginCall(pluginName, OPTIONAL_PLUGINS[pluginName])
         }
-      });
+      })
 
       // 注册路由插件（但不立即启用）
       if (React && history) {
-        monitorInstance.pluginCall('routerChange', RouterMonitorPlugin);
+        monitorInstance.pluginCall('routerChange', RouterMonitorPlugin)
       }
 
       // 注册性能监控插件（但不立即启用）
       if (performanceConfig) {
-        monitorInstance.pluginCall('pagePerformance', PerformanceMonitorPlugin);
+        monitorInstance.pluginCall('pagePerformance', PerformanceMonitorPlugin)
       }
 
       MonitorWrapper.current = withMt(({ children }) => <>{children}</>)
@@ -112,8 +117,8 @@ export default function useMonitor(React, { history } = {}, configs = {}, plugin
       console.error('[Z-Monitor] Initialization failed:', {
         error: e,
         config: { ...options, trackList: options.trackList },
-        platform: options.platform
-      });
+        platform: options.platform,
+      })
     }
   }
 
@@ -122,6 +127,6 @@ export default function useMonitor(React, { history } = {}, configs = {}, plugin
 
   return {
     MonitorWrapper: MonitorWrapper.current,
-    mt: monitor.current
+    mt: monitor.current,
   }
 }

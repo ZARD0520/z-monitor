@@ -27,19 +27,19 @@ export function register(Vue) {
 
 export class ERROR extends Plugin {
   init() {
-    const isVue2 = this.mt.platformName === 'vue2';
+    const isVue2 = this.mt.platformName === 'vue2'
     if (!isVue2) {
-      return console.error('检测当前不是vue2 app环境，必须调用register(Vue)(monitor)注册');
+      return console.error('检测当前不是vue2 app环境，必须调用register(Vue)(monitor)注册')
     }
-    console.log('Vue Error init');
-    const Vue = this.mt.platform;
-    const _this = this;
+    console.log('Vue Error init')
+    const Vue = this.mt.platform
+    const _this = this
     // 异步调用，防止主进程覆盖重写的Vue.config.errorHandler方法
     setTimeout(() => {
-      const errorHandler = Vue.config.errorHandler;
+      const errorHandler = Vue.config.errorHandler
       Vue.config.errorHandler = function (...args) {
         if (!_this.isClose) {
-          const [err, vm, info] = args;
+          const [err, vm, info] = args
           Vue.nextTick(() => {
             _this.send({
               type: _this.TYPES.CODE_ERROR,
@@ -50,11 +50,11 @@ export class ERROR extends Plugin {
                 hook: info,
                 vmName: vm.tag || vm.$vnode ? vm.$vnode.tag : '',
               },
-            });
-          });
+            })
+          })
         }
-        return errorHandler && errorHandler.apply(this, args);
-      };
-    });
+        return errorHandler && errorHandler.apply(this, args)
+      }
+    })
   }
 }

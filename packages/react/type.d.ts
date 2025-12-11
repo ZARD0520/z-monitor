@@ -1,12 +1,12 @@
 export as namespace Monitor
 
 // Monitor-React函数
-export function  useMonitor (
+export function useMonitor(
   React: any,
   options?: { history?: any },
   configs?: DEFAULT_CONFIG,
   pluginConfig?: PLUGIN_CONFIG
-):{
+): {
   MonitorWrapper: React.ComponentType<{ children: React.ReactNode }>
   mt: any
 }

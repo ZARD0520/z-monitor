@@ -1,14 +1,14 @@
-import { EMIT_ERROR } from "../constant/index"
-import { isFalse } from "../utils/index"
+import { EMIT_ERROR } from '../constant/index'
+import { isFalse } from '../utils/index'
 import { SESSION_STORAGE_KEY } from '../constant/config'
 
 export default class LOG {
   constructor({ mt }, options) {
-    this.data = []; // 上传的数据
-    this.mt = mt;
-    this.HTTP_FAIL_COUNT = 0;
-    this.SESSION_RETRY_COUNT = 0; // 重试计数器
-    this.MAX_SESSION_RETRY = 3; // 最大重试次数
+    this.data = [] // 上传的数据
+    this.mt = mt
+    this.HTTP_FAIL_COUNT = 0
+    this.SESSION_RETRY_COUNT = 0 // 重试计数器
+    this.MAX_SESSION_RETRY = 3 // 最大重试次数
     this.MAX_HTTP_FAIL = options.MAX_HTTP_FAIL || 20
     this.max = options.max || 20
     this.type = options.type || 'num'
@@ -16,7 +16,7 @@ export default class LOG {
     this.customMethod = options.customMethod || null
     this.eventHandlers = {
       unloadHandler: null,
-      visibilityHandler: null
+      visibilityHandler: null,
     }
     this.STORAGE_KEY = `monitor_not_uploaded_${this.mt.appName}`
     this.unloadEvent = 'onpagehide' in window ? 'pagehide' : 'beforeunload'
@@ -24,13 +24,13 @@ export default class LOG {
 
   set isClose(value) {
     if (value) {
-      this.cancelInterval();
-      this.clear();
+      this.cancelInterval()
+      this.clear()
     }
   }
 
   setData(data) {
-    this.data = data;
+    this.data = data
   }
 
   init() {
@@ -86,36 +86,36 @@ export default class LOG {
     }
   }
 
-   listenUnload() {
+  listenUnload() {
     window.addEventListener(this.unloadEvent, this.eventHandlers.unloadHandler)
     document.addEventListener('visibilitychange', this.eventHandlers.visibilityHandler)
   }
 
   openInterval() {
-    this.cancelInterval();
+    this.cancelInterval()
     this.interval = setInterval(() => {
-      this.uploadData();
-    }, this.time);
+      this.uploadData()
+    }, this.time)
   }
   cancelInterval() {
-    window.clearInterval(this.interval);
-    this.interval = null;
+    window.clearInterval(this.interval)
+    this.interval = null
   }
   push(item) {
-    if (this.isClose) return;
+    if (this.isClose) return
     // 日志信息预处理
     if (this.customMethod) {
-      let data = this.customMethod(item, [this]);
+      let data = this.customMethod(item, [this])
       if (isFalse(data)) {
-        return;
+        return
       }
-      item = data;
+      item = data
     }
     // 存放日志
-    this.data.push(item);
-    if (this.type === 'time') return;
+    this.data.push(item)
+    if (this.type === 'time') return
     if ((this.data.length / this.max) % 1 === 0) {
-      this.uploadData();
+      this.uploadData()
     }
   }
 
@@ -123,17 +123,21 @@ export default class LOG {
     if (!this.data.length) return
     const data = this.data.slice(0, this.data.length)
     const currentLen = data.length
-    this.mt.plugins.http.request(data, async (result) => {
-      window.log_report = false
-      if ([200, 201].includes(result.status)) {
-        this.data = this.data.slice(currentLen, this.data.length)
-      } else {
-        this.handleUploadError(result.status)
+    this.mt.plugins.http.request(
+      data,
+      async (result) => {
+        window.log_report = false
+        if ([200, 201].includes(result.status)) {
+          this.data = this.data.slice(currentLen, this.data.length)
+        } else {
+          this.handleUploadError(result.status)
+        }
+      },
+      (err) => {
+        console.error(err)
+        window.log_report = false
       }
-    }, (err) => {
-      console.error(err)
-      window.log_report = false
-    })
+    )
   }
 
   // 处理session权限错误
@@ -147,7 +151,9 @@ export default class LOG {
     }
 
     this.SESSION_RETRY_COUNT++
-    console.warn(`SessionId 失效，尝试重新获取 (${this.SESSION_RETRY_COUNT}/${this.MAX_SESSION_RETRY})`)
+    console.warn(
+      `SessionId 失效，尝试重新获取 (${this.SESSION_RETRY_COUNT}/${this.MAX_SESSION_RETRY})`
+    )
 
     try {
       sessionStorage.removeItem(SESSION_STORAGE_KEY)
@@ -175,7 +181,7 @@ export default class LOG {
   }
 
   clear() {
-    this.data = [];
+    this.data = []
     window.removeEventListener(this.unloadEvent, this.eventHandlers.unloadHandler)
     document.removeEventListener('visibilitychange', this.eventHandlers.visibilityHandler)
   }

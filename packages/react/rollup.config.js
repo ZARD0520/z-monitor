@@ -1,8 +1,8 @@
-import { defineConfig } from 'rollup';
-import babel from '@rollup/plugin-babel';
-import terser from '@rollup/plugin-terser';
-import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
+import { defineConfig } from 'rollup'
+import babel from '@rollup/plugin-babel'
+import terser from '@rollup/plugin-terser'
+import resolve from '@rollup/plugin-node-resolve'
+import commonjs from '@rollup/plugin-commonjs'
 
 export default defineConfig([
   {
@@ -17,16 +17,16 @@ export default defineConfig([
         presets: ['@babel/preset-react'],
         plugins: [
           '@babel/plugin-proposal-nullish-coalescing-operator',
-          '@babel/plugin-proposal-optional-chaining'
-        ]
+          '@babel/plugin-proposal-optional-chaining',
+        ],
       }),
       resolve(),
       commonjs(),
-      terser({ 
+      terser({
         module: true,
         compress: { passes: 2 },
-        mangle: true
-      })
+        mangle: true,
+      }),
     ],
   },
   {
@@ -41,15 +41,15 @@ export default defineConfig([
         presets: ['@babel/preset-react'],
         plugins: [
           '@babel/plugin-proposal-nullish-coalescing-operator',
-          '@babel/plugin-proposal-optional-chaining'
-        ]
+          '@babel/plugin-proposal-optional-chaining',
+        ],
       }),
       resolve(),
       commonjs(),
       terser({
         compress: { passes: 2 },
-        mangle: true
-      })
+        mangle: true,
+      }),
     ],
-  }
+  },
 ])

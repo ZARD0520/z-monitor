@@ -1,4 +1,10 @@
-import { register, ERROR, useRouterMonitor, RouterMonitorPlugin, PerformanceMonitorPlugin } from './react'
+import {
+  register,
+  ERROR,
+  useRouterMonitor,
+  RouterMonitorPlugin,
+  PerformanceMonitorPlugin,
+} from './react'
 
 export function usePlatform(platform) {
   if (platform === 'react') {
@@ -7,7 +13,7 @@ export function usePlatform(platform) {
       ERROR,
       RouterMonitorPlugin,
       PerformanceMonitorPlugin,
-      useRouterMonitor
+      useRouterMonitor,
     }
   }
 }

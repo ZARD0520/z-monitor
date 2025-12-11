@@ -7,7 +7,7 @@ import {
   AJAX,
   USERINFO,
   COUNT,
-  VIDEO_RECORD
+  VIDEO_RECORD,
 } from 'z-monitor-core/plugins'
 import { DEFAULT_TRACK_URL } from 'z-monitor-core/constant/config'
 
@@ -16,46 +16,54 @@ const DEFAULT_CONFIG = {
   platform: 'vue2',
   key: 'z-app',
   trackList: ['userInfo'],
-  Router: null
+  Router: null,
 }
 
 const CORE_PLUGINS = {
   click: CLICK,
   ERROR: ERROR,
   reject_error: REJECT_ERROR,
-  count: COUNT
+  count: COUNT,
 }
 
 const OPTIONAL_PLUGINS = {
   ajax: AJAX,
   videoRecord: VIDEO_RECORD,
   userInfo: USERINFO,
-  pagePerformance: null
+  pagePerformance: null,
 }
 
 export default {
   install(Vue, configs = {}) {
     const options = {
       ...DEFAULT_CONFIG,
-      ...configs
+      ...configs,
     }
     try {
-      const { register, ERROR: VUE_ERROR, createRouterMonitor, createPerformanceObserve } = usePlatform(options.platform)
-      
+      const {
+        register,
+        ERROR: VUE_ERROR,
+        createRouterMonitor,
+        createPerformanceObserve,
+      } = usePlatform(options.platform)
+
       const mergePluginConfig = {}
       for (const key in defaultPluginConfig) {
-        mergePluginConfig[key] =
-          Object.assign({}, defaultPluginConfig[key], options.pluginConfig[key])
+        mergePluginConfig[key] = Object.assign(
+          {},
+          defaultPluginConfig[key],
+          options.pluginConfig[key]
+        )
       }
-  
+
       const mergeConfig = {
         key: options.key,
         url: options.url,
         plugins: {
           http: mergePluginConfig.http,
           log: mergePluginConfig.log,
-          click: mergePluginConfig.click
-        }
+          click: mergePluginConfig.click,
+        },
       }
 
       const monitor = new Monitor(mergeConfig)
@@ -71,7 +79,7 @@ export default {
       monitor.pluginCall('platform_error', VUE_ERROR)
 
       // 注册可选插件
-      options.trackList?.forEach(pluginName => {
+      options.trackList?.forEach((pluginName) => {
         if (OPTIONAL_PLUGINS[pluginName] && mergePluginConfig[pluginName]) {
           mergeConfig.plugins[pluginName] = mergePluginConfig[pluginName]
           monitor.pluginCall(pluginName, OPTIONAL_PLUGINS[pluginName])
@@ -82,25 +90,20 @@ export default {
       if (options.Router) {
         monitor.pluginCall('routerChange', createRouterMonitor(options.Router))
         // 注册性能监控
-        if (options.trackList?.includes('pagePerformance') &&
-          mergePluginConfig.pagePerformance) {
+        if (options.trackList?.includes('pagePerformance') && mergePluginConfig.pagePerformance) {
           mergeConfig.plugins.pagePerformance = mergePluginConfig.pagePerformance
           monitor.pluginCall(
             'pagePerformance',
-            createPerformanceObserve(
-              mergePluginConfig.pagePerformance.entryTypes,
-              options.Router
-            )
+            createPerformanceObserve(mergePluginConfig.pagePerformance.entryTypes, options.Router)
           )
         }
       }
-
     } catch (e) {
       console.error('[Z-Monitor] Vue plugin initialization failed:', {
         error: e,
         config: { ...options, trackList: options.trackList },
-        platform: options.platform
+        platform: options.platform,
       })
     }
-  }
+  },
 }
