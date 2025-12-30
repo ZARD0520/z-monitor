@@ -11,21 +11,26 @@ function createPerformanceObserve(entryTypes, router) {
       if (!entryTypes?.length) {
         return console.error('缺少监控目标参数')
       }
+
+      this.observers = new Map()
+      this.currentRoute = null
+      this.entryTypes = entryTypes
+
       /* 首次加载资源指标 */
       window.addEventListener('load', () => {
         setTimeout(() => {
           const performanceData = {
             resources: window.performance.getEntriesByType('resource').map((res) => ({
-              name: res.name, // 资源URL
-              type: res.initiatorType, // 类型（img/script/css等）
-              duration: res.duration, // 加载耗时
-              size: res.transferSize, // 传输大小（字节）
-              protocol: res.nextHopProtocol, // 协议（http/1.1、h2等）
+              name: res.name,
+              type: res.initiatorType,
+              duration: res.duration,
+              size: res.transferSize,
+              protocol: res.nextHopProtocol,
             })),
             content: {
-              domCount: document.getElementsByTagName('*').length, // DOM节点数
-              imgCount: document.images.length, // 图片数量
-              scriptCount: document.scripts.length, // 脚本数量
+              domCount: document.getElementsByTagName('*').length,
+              imgCount: document.images.length,
+              scriptCount: document.scripts.length,
             },
           }
           this.send({
@@ -37,7 +42,50 @@ function createPerformanceObserve(entryTypes, router) {
           })
         }, 1000)
       })
-      /* TODO: 持续监控性能 */
+
+      /* 持续监控性能 */
+      this.startRouteMonitoring(window.location.pathname)
+
+      /* 路由切换时重新启动监控 */
+      router.afterEach((to, from) => {
+        this.stopRouteMonitoring(from.fullPath)
+        this.startRouteMonitoring(to.fullPath)
+      })
+    }
+
+    startRouteMonitoring(routePath) {
+      if (this.observers.has(routePath)) return
+
+      const observer = new PerformanceObserver((list) => {
+        list.getEntries().forEach((entry) => {
+          // 过滤出指定类型的性能指标
+          if (!this.entryTypes.includes(entry.entryType)) return
+          // 过滤请求指标
+          if (['xmlhttprequest', 'fetch'].includes(entry.initiatorType)) return
+          this.send({
+            type: this.TYPES.PERFORMANCE,
+            level: this.LEVELS.INFO,
+            data: entry,
+          })
+        })
+      })
+
+      observer.observe({ entryTypes: this.entryTypes })
+      this.observers.set(routePath, observer)
+      this.currentRoute = routePath
+    }
+
+    stopRouteMonitoring(routePath) {
+      const observer = this.observers.get(routePath)
+      if (observer) {
+        observer.disconnect()
+        this.observers.delete(routePath)
+      }
+    }
+
+    destroy() {
+      this.observers.forEach((observer) => observer.disconnect())
+      this.observers.clear()
     }
   }
 }
