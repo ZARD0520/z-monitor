@@ -5,7 +5,6 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build:core": "pnpm -F z-monitor-core run build",
     "build:vue": "pnpm -F z-monitor-vue run build",
     "build:react": "pnpm -F z-monitor-react run build",
     "build": "pnpm -r run build",
