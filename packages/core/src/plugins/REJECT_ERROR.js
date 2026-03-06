@@ -2,10 +2,11 @@ import { Plugin } from '../plugin.js'
 
 export default class REJECT_ERROR extends Plugin {
   init(options) {
+    if (typeof window === 'undefined') return
     console.log('reject init')
     this.options = options
     this.errorEvent = (e) => this.handleError(e)
-    window.addEventListener('unhandledrejection', (e) => this.handleError(e), true)
+    window.addEventListener('unhandledrejection', this.errorEvent, true)
   }
   handleError(event) {
     // 普通异步错误
@@ -22,6 +23,7 @@ export default class REJECT_ERROR extends Plugin {
     })
   }
   destroy() {
-    window.removeEventListener('unhandledrejection', this.errorEvent)
+    if (typeof window !== 'undefined')
+      window.removeEventListener('unhandledrejection', this.errorEvent)
   }
 }

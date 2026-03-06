@@ -25,7 +25,7 @@ export class Plugin {
     this.mt.addCommonData(prop, key, value)
   }
   send(data, ...other) {
-    const time = window.Date.now()
+    const time = Date.now()
     getScheduler(() => {
       if (this.customMethod) {
         const res = this.customMethod({ time, ...data }, other)

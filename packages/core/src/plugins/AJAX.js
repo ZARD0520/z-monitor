@@ -12,9 +12,11 @@ export default class AJAX extends Plugin {
     }
 
     this.listenXhr()
+    this.listenFetch()
   }
 
   listenXhr() {
+    if (typeof XMLHttpRequest === 'undefined') return
     const _this = this
     const { req, res, excludeUrls } = this.finalOptions
     const open = XMLHttpRequest.prototype.open
@@ -95,6 +97,7 @@ export default class AJAX extends Plugin {
   }
 
   listenFetch() {
+    if (typeof window === 'undefined') return
     const nativeFetch = window.fetch
     if (!nativeFetch) {
       return
@@ -107,7 +110,7 @@ export default class AJAX extends Plugin {
         return nativeFetch(input, init)
       }
 
-      const url = typeof input === 'string' ? input : input.url
+      const url = getFetchUrl(input)
       if (isExcludeUrl(url, excludeUrls)) {
         return nativeFetch(input, init)
       }
@@ -116,7 +119,7 @@ export default class AJAX extends Plugin {
       // const method = (init.method || 'GET').toUpperCase()
       const body = init.body || null
 
-      let fetchData = { url: `${url} [fetch]`, interval: '' }
+      let fetchData = { url: url ? `${url} [fetch]` : '[fetch]', interval: '' }
       if (req && body) {
         fetchData.req = body
       }
@@ -129,7 +132,8 @@ export default class AJAX extends Plugin {
 
         fetchData.interval = Date.now() - startTime + 'ms'
         if (res && text) fetchData.res = text
-        fetchData.url = `${url} [${response.status}]`
+        const recordUrl = url || response.url || ''
+        fetchData.url = recordUrl ? `${recordUrl} [${response.status}]` : `[${response.status}]`
 
         if (response.status >= 200 && response.status < 300) {
           _this.send({
@@ -149,7 +153,7 @@ export default class AJAX extends Plugin {
         return response
       } catch (err) {
         fetchData.interval = Date.now() - startTime + 'ms'
-        fetchData.url = `${url} [0]`
+        fetchData.url = url ? `${url} [0]` : '[0]'
         _this.send({
           type: _this.TYPES.AJAX_FAIL,
           level: _this.LEVELS.ERROR,
@@ -164,4 +168,20 @@ export default class AJAX extends Plugin {
 
 function isExcludeUrl(url, excludeUrls) {
   return excludeUrls?.some((excludeUrl) => url?.includes(excludeUrl))
+}
+
+/**
+ * 从 fetch input 中安全提取 URL
+ * input 可能是: string | Request | URL 等
+ */
+function getFetchUrl(input) {
+  if (!input) return ''
+  if (typeof input === 'string') return input
+  if (typeof input?.url === 'string') return input.url
+  if (typeof input?.href === 'string') return input.href
+  try {
+    return String(input)
+  } catch {
+    return ''
+  }
 }

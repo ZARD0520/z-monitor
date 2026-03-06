@@ -1,5 +1,5 @@
 import { EMIT_ERROR } from '../constant/index'
-import { isFalse } from '../utils/index'
+import { isFalse, isBrowser } from '../utils/index'
 import { SESSION_STORAGE_KEY } from '../constant/config'
 
 export default class LOG {
@@ -19,7 +19,8 @@ export default class LOG {
       visibilityHandler: null,
     }
     this.STORAGE_KEY = `monitor_not_uploaded_${this.mt.appName}`
-    this.unloadEvent = 'onpagehide' in window ? 'pagehide' : 'beforeunload'
+    this.unloadEvent =
+      typeof window !== 'undefined' && 'onpagehide' in window ? 'pagehide' : 'beforeunload'
   }
 
   set isClose(value) {
@@ -34,6 +35,7 @@ export default class LOG {
   }
 
   init() {
+    if (!isBrowser()) return
     this.initUnloadHandler()
     this.restoreUnsentData()
     this.listenUnload()
@@ -44,32 +46,24 @@ export default class LOG {
 
   initUnloadHandler() {
     this.eventHandlers.unloadHandler = (event) => {
+      if (typeof localStorage === 'undefined') return
       if (this.unloadEvent === 'pagehide' && event.persisted) {
         return
       }
       if (this.data?.length) {
-        /* const httpPlugin = this.mt.plugins.http */
         const saveData = JSON.stringify(this.data)
-        /* if (httpPlugin?.shouldUseBeacon(saveData)) {
-          let isSuccess = false
-          httpPlugin.request(this.data, (success) => {
-            isSuccess = !!success
-          }, (err)=>{ console.error(err) })
-          if (isSuccess) {
-            return
-          }
-        } */
         localStorage.setItem(this.STORAGE_KEY, saveData)
       }
     }
     this.eventHandlers.visibilityHandler = () => {
-      if (document.visibilityState === 'hidden') {
+      if (typeof document !== 'undefined' && document.visibilityState === 'hidden') {
         this.uploadData()
       }
     }
   }
 
   restoreUnsentData() {
+    if (typeof localStorage === 'undefined') return
     try {
       const saveDataStr = localStorage.getItem(this.STORAGE_KEY)
       if (saveDataStr) {
@@ -87,6 +81,7 @@ export default class LOG {
   }
 
   listenUnload() {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return
     window.addEventListener(this.unloadEvent, this.eventHandlers.unloadHandler)
     document.addEventListener('visibilitychange', this.eventHandlers.visibilityHandler)
   }
@@ -126,7 +121,7 @@ export default class LOG {
     this.mt.plugins.http.request(
       data,
       async (result) => {
-        window.log_report = false
+        if (typeof window !== 'undefined') window.log_report = false
         if ([200, 201].includes(result.status)) {
           this.data = this.data.slice(currentLen, this.data.length)
         } else {
@@ -135,7 +130,7 @@ export default class LOG {
       },
       (err) => {
         console.error(err)
-        window.log_report = false
+        if (typeof window !== 'undefined') window.log_report = false
       }
     )
   }
@@ -156,7 +151,7 @@ export default class LOG {
     )
 
     try {
-      sessionStorage.removeItem(SESSION_STORAGE_KEY)
+      if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem(SESSION_STORAGE_KEY)
       await this.mt.initSessionId(this.mt.options, true)
       this.SESSION_RETRY_COUNT = 0
       this.uploadData()
@@ -182,7 +177,9 @@ export default class LOG {
 
   clear() {
     this.data = []
-    window.removeEventListener(this.unloadEvent, this.eventHandlers.unloadHandler)
-    document.removeEventListener('visibilitychange', this.eventHandlers.visibilityHandler)
+    if (typeof window !== 'undefined')
+      window.removeEventListener(this.unloadEvent, this.eventHandlers.unloadHandler)
+    if (typeof document !== 'undefined')
+      document.removeEventListener('visibilitychange', this.eventHandlers.visibilityHandler)
   }
 }

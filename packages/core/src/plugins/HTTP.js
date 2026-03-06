@@ -4,7 +4,7 @@ export default class HTTP {
     this.mt = mt
   }
   init(options) {
-    this.url = options.url + '/api/monitor/add'
+    this.url = options.url + '/monitor/add'
     this.method = options.requestConfig.method
     this.headers = options.requestConfig.headers
     this.customMethod = options.customMethod || null
@@ -14,10 +14,10 @@ export default class HTTP {
   }
   // data上传数据   done方法手动控制请求是否完毕
   async request(data, done, errCatch) {
-    if (window.log_report) {
+    if (typeof window !== 'undefined' && window.log_report) {
       return
     }
-    window.log_report = true
+    if (typeof window !== 'undefined') window.log_report = true
     // 数据预处理
     if (this.mt.beforeReport) {
       let _data = this.mt.beforeReport(data)

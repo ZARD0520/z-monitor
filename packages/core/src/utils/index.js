@@ -1,3 +1,6 @@
+/** SSR 兼容：检测是否在浏览器环境 */
+export const isBrowser = () => typeof window !== 'undefined'
+
 export function reLog(value, type = 'log') {
   if (typeof console[type] === 'function') {
     console[type](value)
@@ -28,7 +31,7 @@ export const getObjType = (obj, type) => {
     '[object Null]': 'null',
     '[object Object]': 'object',
   }
-  if (obj instanceof Element) {
+  if (typeof Element !== 'undefined' && obj instanceof Element) {
     return 'element'
   }
   return map[toString.call(obj)] === type

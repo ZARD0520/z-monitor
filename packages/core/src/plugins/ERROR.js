@@ -2,10 +2,11 @@ import { Plugin } from '../plugin.js'
 
 export default class ERROR extends Plugin {
   init(options) {
+    if (typeof window === 'undefined') return
     console.log('error init')
     this.options = options
     this.errorEvent = (e) => this.handleError(e)
-    window.addEventListener('error', (e) => this.handleError(e), true)
+    window.addEventListener('error', this.errorEvent, true)
   }
   handleErrorType(event) {
     let targetType = '错误'
@@ -29,10 +30,8 @@ export default class ERROR extends Plugin {
     return targetType
   }
   handleError(event) {
-    // 普通错误
-    const { reason = {} } = event
-    const { message = null, stack = null } = reason
-    // 此处可优化-可根据event.target.tagName来判断错误来源的tag(视频？音频？图片？脚本？样式等)
+    const message = event.message ?? event.reason?.message ?? null
+    const stack = event.error?.stack ?? event.reason?.stack ?? null
     const targetType = this.handleErrorType(event)
     this.send({
       type: this.TYPES.CODE_ERROR,
@@ -45,6 +44,6 @@ export default class ERROR extends Plugin {
     })
   }
   destroy() {
-    window.removeEventListener('error', this.errorEvent)
+    if (typeof window !== 'undefined') window.removeEventListener('error', this.errorEvent)
   }
 }

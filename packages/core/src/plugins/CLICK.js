@@ -12,6 +12,7 @@ import { EMIT_ERROR } from '../constant/index.js'
 
 export default class CLICK extends Plugin {
   init(options) {
+    if (typeof window === 'undefined') return
     console.log('Click init')
     this.options = options
     this.debounceMap = new Map()
@@ -54,6 +55,6 @@ export default class CLICK extends Plugin {
   }
   destroy() {
     this.debounceMap.clear()
-    window.removeEventListener('mouseup', this.clickEvent)
+    if (typeof window !== 'undefined') window.removeEventListener('mouseup', this.clickEvent)
   }
 }

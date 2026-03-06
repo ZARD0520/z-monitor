@@ -1,4 +1,4 @@
-import { getObj, getObjType, hasValue, reLog } from './utils/index'
+import { getObj, getObjType, hasValue, reLog, isBrowser } from './utils/index'
 import { LEVELS, TYPES, EMIT_ERROR } from './constant/index'
 import { HTTP, LOG } from './plugins/index'
 import { DEFAULT_SESSION_URL, SESSION_STORAGE_KEY } from './constant/config'
@@ -80,6 +80,7 @@ export class Monitor {
     this.init(options)
   }
   async init(options) {
+    if (!isBrowser()) return
     console.log('Monitor init')
     // 初始化全局需要的数据
     this.initGlobal()
@@ -98,12 +99,14 @@ export class Monitor {
   }
   // 初始化sessionId
   async initSessionId(options, isRefresh = false) {
+    if (!isBrowser()) return
     try {
       if (!isRefresh) {
         if (this.sessionId) {
           return
         }
-        const storedSessionId = sessionStorage.getItem(SESSION_STORAGE_KEY)
+        const storedSessionId =
+          typeof sessionStorage !== 'undefined' ? sessionStorage.getItem(SESSION_STORAGE_KEY) : null
         if (storedSessionId) {
           this.sessionId = storedSessionId
           return
@@ -112,13 +115,14 @@ export class Monitor {
       // 使用 HTTP 插件发送请求
       const response = await this.plugins.http.customRequest({
         method: 'GET',
-        url: (options.url || DEFAULT_SESSION_URL) + '/api/session/id',
+        url: (options.url || DEFAULT_SESSION_URL) + '/session/id',
       })
 
       // 检查响应是否有效
       if (response && response.data?.sessionId) {
         this.sessionId = response.data?.sessionId
-        sessionStorage.setItem(SESSION_STORAGE_KEY, this.sessionId)
+        if (typeof sessionStorage !== 'undefined')
+          sessionStorage.setItem(SESSION_STORAGE_KEY, this.sessionId)
         console.log('SessionId 初始化成功:', this.sessionId)
       } else {
         throw new Error('无效的响应数据')
@@ -152,21 +156,22 @@ export class Monitor {
   }
   // 初始化基础信息
   initBaseInfo() {
+    if (!isBrowser()) return
     const timeZoneOffset = new Date().getTimezoneOffset()
     const offsetHours = Math.floor(Math.abs(timeZoneOffset) / 60)
     const offsetDirection = timeZoneOffset > 0 ? '-' : '+'
     const timezone = offsetDirection + offsetHours
-    const networkInfo =
-      navigator.connection || navigator.mozConnection || navigator.webkitConnection || {}
+    const nav = typeof navigator !== 'undefined' ? navigator : {}
+    const networkInfo = nav.connection || nav.mozConnection || nav.webkitConnection || {}
     this.baseInfo = {
       timezone,
-      language: navigator.language || navigator.userLanguage || 'en',
+      language: nav.language || nav.userLanguage || 'en',
       deviceInfo: {
-        userAgent: navigator.userAgent,
+        userAgent: nav.userAgent || '',
         networkInfo: {
-          downlink: networkInfo.downlink, // 下行速度（Mbps）
-          effectiveType: networkInfo.effectiveType, // 网络类型（如 '4g'）
-          type: networkInfo.type, // 连接类型（如 'wifi'）
+          downlink: networkInfo.downlink,
+          effectiveType: networkInfo.effectiveType,
+          type: networkInfo.type,
           rtt: networkInfo.rtt,
           saveData: networkInfo.saveData,
         },
@@ -241,11 +246,23 @@ export class Monitor {
     this.plugins.log.push(item)
   }
   getCommonConfig() {
+    if (!isBrowser()) {
+      return {
+        info: {
+          pageTitle: '',
+          pageUrl: '',
+          timezone: '',
+          language: '',
+          deviceInfo: {},
+          locationInfo: {},
+        },
+      }
+    }
     this.initBaseInfo()
     let total = {
       info: {
-        pageTitle: document.title,
-        pageUrl: window.location.href,
+        pageTitle: typeof document !== 'undefined' ? document.title : '',
+        pageUrl: typeof window !== 'undefined' ? window.location.href : '',
         timezone: this.baseInfo?.timezone,
         language: this.baseInfo?.language,
         deviceInfo: this.baseInfo?.deviceInfo || {},
@@ -255,8 +272,8 @@ export class Monitor {
     const len = this.commonParams.length
     if (len) {
       for (let i = 0; i <= len - 1; i++) {
-        let temp = this.commonParams[i](total)
-        if (getObjType(total, 'object')) {
+        const temp = this.commonParams[i](total)
+        if (!getObjType(temp, 'object')) {
           reLog(
             `setCommonConfig 传递函数需要\n${this.commonParams[
               i

@@ -67,4 +67,5 @@ export const EMIT_ERROR = {
   HTTP_FAIL: 'HTTP_FAIL', // 日志发送失败
   PLUGIN_ERROR: 'PLUGIN_ERROR', // 插件错误
   SESSION_FAILED: 'SESSION_FAILED', // sessionId获取失败或过期
+  SESSION_INIT_FAILED: 'SESSION_INIT_FAILED', // sessionId 重新获取失败
 }
