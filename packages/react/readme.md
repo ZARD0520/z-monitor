@@ -6,7 +6,8 @@
 - 🚀 高性能：采用 fetch(low优先级) 和批量上报机制，对页面性能影响小。
 - 📦 轻量无依赖：核心包体积仅 <90>KB。
 - 🔧 高度可定制：支持自定义事件、扩展字段、生命周期钩子。
-- 🌐 跨框架兼容：支持 React、Vue（目前仅支持SPA，SSR及其他框架暂未兼容），不同框架安装不同的子包。
+- 🌐 跨框架兼容：支持 React、Vue，不同框架安装不同的子包。
+- 🔒 SSR 兼容：核心通过 `isBrowser()` 检测环境，服务端仅注册不初始化，客户端 hydration 后自动完成采集与上报。
 
 ## 📦 安装
 
@@ -95,6 +96,74 @@ pnpm add z-monitor-react
 
    ```
 
+## 🖥️ Next.js 使用方式
+
+SDK 已做 SSR 兼容：服务端执行时 `isBrowser()` 为 false，各插件的 `init()` 会直接 return；客户端 hydration 后自动完成初始化与上报。React 包通过 `window.__NEXT_DATA__` 自动识别 Next.js 环境，采用 `router.events` 监听路由变化（Pages Router）。
+
+### 1. Pages Router 初始化
+
+在 `pages/_app.js`（或 `_app.tsx`）中：
+
+```jsx
+import React from 'react'
+import useMonitor from 'z-monitor-react'
+import { useRouter } from 'next/router'
+
+const MtContext = React.createContext(null)
+
+export default function MyApp({ Component, pageProps }) {
+  const router = useRouter()
+  const { MonitorWrapper, mt } = useMonitor(
+    React,
+    { history: router },
+    {
+      url: '你的上报服务地址',
+      platform: 'react',
+      key: 'your-project-key',
+      trackList: ['userInfo', 'ajax', 'pagePerformance'],
+    },
+    {
+      ajax: { excludeUrls: ['/api/health', '/_next/'] },
+      userInfo: {
+        getData: () => ({ userId: '', userName: '' }),
+      },
+      log: { type: 'num', max: 5 },
+    }
+  )
+
+  return (
+    <MtContext.Provider value={mt}>
+      <MonitorWrapper>
+        <Component {...pageProps} />
+      </MonitorWrapper>
+    </MtContext.Provider>
+  )
+}
+
+export { MtContext }
+```
+
+### 2. 在组件中手动上报
+
+```jsx
+import { useContext } from 'react'
+import { MtContext } from '../pages/_app'
+
+function MyComponent() {
+  const monitor = useContext(MtContext)
+
+  const handleClick = () => {
+    monitor.count('button_click', { buttonId: 'submit' })
+  }
+
+  return <button onClick={handleClick}>点击</button>
+}
+```
+
+### 3. App Router 说明
+
+若使用 Next.js 13+ App Router，需在客户端组件中初始化（`'use client'`），并传入pathname
+
 ## ⚙️ 核心配置
 
 |       参数        |   类型   | 默认值 |                         描述                          |
@@ -103,7 +172,7 @@ pnpm add z-monitor-react
 |     platform      |  string  |        |        必填，前端框架名称（Vue2、Vue3、React）        |
 |        key        |  string  |        |                   必填，项目唯一key                   |
 |     trackList     | string[] |        | 选填，可选采集的信息：userInfo、ajax、pagePerformance |
-|      Router       |  Router  |        |                    必填，路由实例                     |
+|      history/pathname      |  Object  |        | 必填，路由实例（React Router 的 history / Next.js 的 pathname） |
 |   pluginConfig    |  Object  |        |                    选填，插件配置                     |
 | pluginConfig.ajax |  Object  |        |                  选填，插件配置-AJAX                  |
 

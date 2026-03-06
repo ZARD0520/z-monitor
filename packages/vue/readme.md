@@ -6,7 +6,8 @@
 - 🚀 高性能：采用 fetch(low优先级) 和批量上报机制，对页面性能影响小。
 - 📦 轻量无依赖：核心包体积仅 <90>KB。
 - 🔧 高度可定制：支持自定义事件、扩展字段、生命周期钩子。
-- 🌐 跨框架兼容：支持 React、Vue（目前仅支持SPA，SSR及其他框架暂未兼容），不同框架安装不同的子包。
+- 🌐 跨框架兼容：支持 React、Vue、Nuxt，不同框架安装不同的子包。
+- 🔒 SSR 兼容：核心通过 `isBrowser()` 检测环境，服务端仅注册不初始化，客户端自动完成采集与上报。
 
 ## 📦 安装
 
@@ -84,6 +85,66 @@ pnpm add z-monitor-vue
    monitor.count('name', /* 自定义数据 */)
 
    ```
+
+## 🖥️ Nuxt 使用方式
+
+SDK 已做 SSR 兼容：服务端执行时 `isBrowser()` 为 false，各插件（CLICK、ERROR、LOG、AJAX 等）的 `init()` 会直接 return，不挂载监听、不发起请求；客户端 hydration 后自动完成初始化与上报。因此插件可同时运行于服务端与客户端，无需 `.client` 后缀。
+
+### 1. 创建插件
+
+在 `plugins/` 目录下创建 `z-monitor.ts`：
+
+```typescript
+// plugins/z-monitor.ts
+import Monitor from 'z-monitor-vue'
+
+export default defineNuxtPlugin((nuxtApp) => {
+  const router = useRouter()
+
+  nuxtApp.vueApp.use(Monitor, {
+    url: '你的上报服务地址',
+    platform: 'vue3',
+    key: 'your-project-key',
+    trackList: ['userInfo', 'ajax', 'pagePerformance'],
+    Router: router,
+    pluginConfig: {
+      ajax: {
+        excludeUrls: ['/api/health', '/_nuxt/'],
+      },
+      userInfo: {
+        getData: () => {
+          // 根据项目状态管理方式调整，如 Pinia: const userStore = useUserStore()
+          return {
+            userId: '',
+            userName: '',
+          }
+        },
+      },
+      log: {
+        type: 'num',
+        max: 5,
+      },
+    },
+  })
+})
+```
+
+### 2. 在组件中手动上报
+
+通过 `inject('mt')` 获取 monitor 实例（与 Vue 3 相同）：
+
+```typescript
+// 在 Vue 组件或 composable 中
+const monitor = inject('mt')
+
+// 记录自定义事件
+monitor.count('button_click', { buttonId: 'submit' })
+
+// 记录用户故事（带时长）
+monitor.startRecord('checkout_flow', { step: 1 })
+// ... 用户操作 ...
+monitor.endRecord('checkout_flow')
+```
 
 ## ⚙️ 核心配置
 
