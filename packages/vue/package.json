@@ -4,7 +4,8 @@
   "description": "z-monitor vue lib",
   "type": "module",
   "files": [
-    "dist/*"
+    "dist/*",
+    "type.d.ts"
   ],
   "main": "./dist/index.cjs.min.js",
   "module": "./dist/index.esm.min.js",

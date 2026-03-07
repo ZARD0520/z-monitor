@@ -14,7 +14,7 @@ export function register(React, mt) {
   // eslint-disable-next-line no-unused-vars
   return function (WrappedComponent) {
     const ErrorBoundary = mt.plugins.platform_error?.ErrorBoundary
-    return function (props) {
+    function WithErrorBoundary(props) {
       if (!ErrorBoundary) {
         console.warn('错误边界不可用, 已跳过')
         return <WrappedComponent {...props} />
@@ -25,6 +25,8 @@ export function register(React, mt) {
         </ErrorBoundary>
       )
     }
+    WithErrorBoundary.displayName = `withErrorBoundary(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`
+    return WithErrorBoundary
   }
 }
 
@@ -102,64 +104,74 @@ export class RouterMonitorPlugin extends Plugin {
         data: {
           fromPath: from.pathname || from,
           toPath: to.pathname || to,
-          fromTitle: from.name || document.title,
+          fromTitle: from.name || (typeof document !== 'undefined' ? document.title : ''),
         },
       })
     }
   }
 }
 
-export function useRouterMonitor(mt, React, history) {
-  const ifNext = isNext()
-  const [prevRoutePath, setPrevRoutePath] = React.useState(history.location.pathname)
+export function useRouterMonitor(mt, React, history, pathnameFromHook) {
+  const ifNext = typeof window !== 'undefined' && isNext()
+  const initialPath = history?.location?.pathname ?? pathnameFromHook ?? ''
+  const [prevRoutePath, setPrevRoutePath] = React.useState(initialPath)
+  const hasReportedInitial = React.useRef(false)
 
   React.useEffect(() => {
+    if (!mt) return
     const routerPlugin = mt?.plugins?.routerChange
     const performancePlugin = mt?.plugins?.pagePerformance
 
-    // 前置判断
-    if (!routerPlugin) {
-      return console.error('尚未注册路由监控插件')
+    if (!routerPlugin) return
+    // Next.js App Router: 使用 pathname 监听路由变化（由 usePathname() 传入）
+    if (pathnameFromHook !== undefined) {
+      const currentPath = pathnameFromHook ?? ''
+      // 首屏 PV：SSR 落地页、直接访问、刷新时上报初始页面
+      if (!hasReportedInitial.current) {
+        hasReportedInitial.current = true
+        routerPlugin.sendRouteChange({ pathname: currentPath }, { pathname: '', name: 'initial' })
+        if (performancePlugin) performancePlugin.startRouteMonitoring(currentPath)
+        setPrevRoutePath(currentPath)
+        return
+      }
+      if (prevRoutePath !== currentPath) {
+        routerPlugin.sendRouteChange({ pathname: currentPath }, { pathname: prevRoutePath })
+        if (performancePlugin) {
+          performancePlugin.stopRouteMonitoring(prevRoutePath)
+          performancePlugin.startRouteMonitoring(currentPath)
+        }
+        setPrevRoutePath(currentPath)
+      }
+      return
     }
-    if (!history) {
-      return console.error('路由监控需要传入history对象')
-    }
+    if (!history) return
 
     const sendRouteChange = (url, path) => {
-      routerPlugin.sendRouteChange(url, path)
-      // 性能相关的监控
+      const toObj = typeof url === 'string' ? { pathname: url } : url
+      const fromObj = typeof path === 'string' ? { pathname: path } : path
+      routerPlugin.sendRouteChange(toObj, fromObj)
       if (performancePlugin) {
-        // 停止前一路由的监控（保留数据）
-        if (prevRoutePath !== url) {
+        if (prevRoutePath !== (toObj.pathname || url)) {
           performancePlugin.stopRouteMonitoring(prevRoutePath)
         }
-
-        // 启动新路由监控
-        performancePlugin.startRouteMonitoring(url)
+        performancePlugin.startRouteMonitoring(toObj.pathname || url)
       }
     }
 
     if (ifNext) {
       const handleRouteChange = (url, { shallow }) => {
-        if (!shallow) {
-          sendRouteChange(url, prevRoutePath)
-        }
+        if (!shallow) sendRouteChange(url, prevRoutePath)
       }
-
       history.events.on('routeChangeComplete', handleRouteChange)
-
-      return () => {
-        history.events.off('routeChangeComplete', handleRouteChange)
-      }
+      return () => history.events.off('routeChangeComplete', handleRouteChange)
     } else {
       const unlisten = history.listen((location) => {
         sendRouteChange(location.pathname, prevRoutePath)
         setPrevRoutePath(location.pathname)
       })
-
       return () => unlisten()
     }
-  }, [ifNext, history])
+  }, [mt, ifNext, history, pathnameFromHook, prevRoutePath])
 }
 
 export class PerformanceMonitorPlugin extends Plugin {
@@ -171,7 +183,7 @@ export class PerformanceMonitorPlugin extends Plugin {
   }
 
   startRouteMonitoring(routePath) {
-    if (this.observers.has(routePath)) return
+    if (this.observers?.has(routePath)) return
 
     const observer = new PerformanceObserver((list) => {
       list.getEntries().forEach((entry) => {
@@ -190,9 +202,7 @@ export class PerformanceMonitorPlugin extends Plugin {
 
   stopRouteMonitoring(routePath) {
     const observer = this.observers.get(routePath)
-    console.log(routePath, this.observers)
     if (observer) {
-      console.log('this is stop2')
       observer.disconnect()
       this.observers.delete(routePath)
     }

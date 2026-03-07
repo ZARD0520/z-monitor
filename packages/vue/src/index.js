@@ -33,8 +33,12 @@ const OPTIONAL_PLUGINS = {
   pagePerformance: null,
 }
 
+const isClient = typeof window !== 'undefined'
+
 export default {
   install(Vue, configs = {}) {
+    if (!isClient) return
+
     const options = {
       ...DEFAULT_CONFIG,
       ...configs,
