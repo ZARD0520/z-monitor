@@ -118,7 +118,7 @@ export function useRouterMonitor(mt, React, history, pathnameFromHook) {
   const hasReportedInitial = React.useRef(false)
 
   React.useEffect(() => {
-    if (!mt) return
+    if (!mt || typeof window === 'undefined') return
     const routerPlugin = mt?.plugins?.routerChange
     const performancePlugin = mt?.plugins?.pagePerformance
 
@@ -176,6 +176,7 @@ export function useRouterMonitor(mt, React, history, pathnameFromHook) {
 
 export class PerformanceMonitorPlugin extends Plugin {
   init(options = {}) {
+    if (typeof window === 'undefined') return
     this.observers = new Map()
     this.currentRoute = null
     this.entryTypes = options.entryTypes || ['navigation', 'resource']
@@ -183,6 +184,7 @@ export class PerformanceMonitorPlugin extends Plugin {
   }
 
   startRouteMonitoring(routePath) {
+    if (typeof window === 'undefined' || typeof PerformanceObserver === 'undefined') return
     if (this.observers?.has(routePath)) return
 
     const observer = new PerformanceObserver((list) => {

@@ -166,15 +166,15 @@ function MyComponent() {
 
 ## ⚙️ 核心配置
 
-|       参数        |   类型   | 默认值 |                         描述                          |
-| :---------------: | :------: | :----: | :---------------------------------------------------: |
-|        url        |  string  |        |                 必填，上报服务端地址                  |
-|     platform      |  string  |        |        必填，前端框架名称（Vue2、Vue3、React）        |
-|        key        |  string  |        |                   必填，项目唯一key                   |
-|     trackList     | string[] |        | 选填，可选采集的信息：userInfo、ajax、pagePerformance |
-|      history/pathname      |  Object  |        | 必填，路由实例（React Router 的 history / Next.js 的 pathname） |
-|   pluginConfig    |  Object  |        |                    选填，插件配置                     |
-| pluginConfig.ajax |  Object  |        |                  选填，插件配置-AJAX                  |
+|       参数        |   类型   | 默认值 |                              描述                               |
+| :---------------: | :------: | :----: | :-------------------------------------------------------------: |
+|        url        |  string  |        |                      必填，上报服务端地址                       |
+|     platform      |  string  |        |             必填，前端框架名称（Vue2、Vue3、React）             |
+|        key        |  string  |        |                        必填，项目唯一key                        |
+|     trackList     | string[] |        |      选填，可选采集的信息：userInfo、ajax、pagePerformance      |
+| history/pathname  |  Object  |        | 必填，路由实例（React Router 的 history / Next.js 的 pathname） |
+|   pluginConfig    |  Object  |        |                         选填，插件配置                          |
+| pluginConfig.ajax |  Object  |        |                       选填，插件配置-AJAX                       |
 
 ```typescript
 // pluginConfig 全部可选参数
