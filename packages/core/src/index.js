@@ -1,4 +1,4 @@
-import { getObj, getObjType, hasValue, reLog, isBrowser } from './utils/index'
+import { getObj, getObjType, hasValue, reLog, isBrowser, safeError } from './utils/index'
 import { LEVELS, TYPES, EMIT_ERROR } from './constant/index'
 import { HTTP, LOG } from './plugins/index'
 import { DEFAULT_SESSION_URL, SESSION_STORAGE_KEY } from './constant/config'
@@ -94,7 +94,7 @@ export class Monitor {
     try {
       await this.initSessionId(options)
     } catch (error) {
-      console.error(error.message)
+      console.error(error?.message ?? 'SessionId init failed')
     }
   }
   // 初始化sessionId
@@ -130,7 +130,7 @@ export class Monitor {
     } catch (error) {
       // 请求失败，递增重试计数器
       this.retryCount++
-      console.error(`SessionId 初始化失败，重试次数: ${this.retryCount}`, error)
+      console.error(`SessionId 初始化失败，重试次数: ${this.retryCount}`, safeError(error))
 
       // 如果重试次数未达到最大值，则继续重试
       if (this.retryCount < this.MAX_RETRY_COUNT) {
@@ -200,7 +200,7 @@ export class Monitor {
       }
       plugin.init && plugin.init(options)
     } catch (e) {
-      console.warn('插件注册错误', name, e)
+      console.warn('插件注册错误', name, safeError(e))
       this.emit('error', EMIT_ERROR.PLUGIN_ERROR)
     }
   }
@@ -318,3 +318,4 @@ export class Monitor {
 }
 
 export * from './plugin'
+export { safeError } from './utils/index'

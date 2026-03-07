@@ -1,4 +1,4 @@
-import { defaultPluginConfig, Monitor } from 'z-monitor-core'
+import { defaultPluginConfig, Monitor, safeError } from 'z-monitor-core'
 import { usePlatform } from './platform/index'
 import {
   CLICK,
@@ -104,7 +104,7 @@ export default {
       }
     } catch (e) {
       console.error('[Z-Monitor] Vue plugin initialization failed:', {
-        error: e,
+        error: safeError(e),
         config: { ...options, trackList: options.trackList },
         platform: options.platform,
       })

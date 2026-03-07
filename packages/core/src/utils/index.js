@@ -1,6 +1,22 @@
 /** SSR 兼容：检测是否在浏览器环境 */
 export const isBrowser = () => typeof window !== 'undefined'
 
+/**
+ * 安全序列化 Error 对象，避免循环引用导致控制台打开时 RangeError: Out of memory
+ * Error 对象可能包含 DOM、React 组件等循环引用，直接传给 console 时 DevTools 序列化会内存溢出
+ */
+export function safeError(err) {
+  if (err == null) return null
+  try {
+    return {
+      message: err?.message ?? String(err),
+      stack: err?.stack ?? undefined,
+    }
+  } catch {
+    return { message: String(err) }
+  }
+}
+
 export function reLog(value, type = 'log') {
   if (typeof console[type] === 'function') {
     console[type](value)

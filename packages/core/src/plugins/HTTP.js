@@ -1,4 +1,4 @@
-import { isFalse } from '../utils/index'
+import { isFalse, safeError } from '../utils/index'
 export default class HTTP {
   constructor({ mt }) {
     this.mt = mt
@@ -104,7 +104,7 @@ export default class HTTP {
       done && done(result)
     } catch (err) {
       errCatch && errCatch(err)
-      console.error('Request failed:', err)
+      console.error('Request failed:', safeError(err))
     }
   }
 

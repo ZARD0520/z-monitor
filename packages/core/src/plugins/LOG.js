@@ -1,5 +1,5 @@
 import { EMIT_ERROR } from '../constant/index'
-import { isFalse, isBrowser } from '../utils/index'
+import { isFalse, isBrowser, safeError } from '../utils/index'
 import { SESSION_STORAGE_KEY } from '../constant/config'
 
 export default class LOG {
@@ -76,7 +76,7 @@ export default class LOG {
         this.data = []
       }
     } catch (err) {
-      console.error('恢复未上报数据失败:', err)
+      console.error('恢复未上报数据失败:', safeError(err))
     }
   }
 
@@ -129,7 +129,7 @@ export default class LOG {
         }
       },
       (err) => {
-        console.error(err)
+        console.error('日志上报失败:', safeError(err))
         if (typeof window !== 'undefined') window.log_report = false
       }
     )
@@ -156,7 +156,7 @@ export default class LOG {
       this.SESSION_RETRY_COUNT = 0
       this.uploadData()
     } catch (error) {
-      console.error('重新获取 sessionId 失败:', error)
+      console.error('重新获取 sessionId 失败:', safeError(error))
       this.mt.emit('error', EMIT_ERROR.SESSION_INIT_FAILED)
     }
   }
