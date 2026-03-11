@@ -124,6 +124,7 @@ export default class LOG {
         if (typeof window !== 'undefined') window.log_report = false
         if ([200, 201].includes(result.status)) {
           this.data = this.data.slice(currentLen, this.data.length)
+          this.HTTP_FAIL_COUNT = 0 // 成功后重置失败计数
         } else {
           this.handleUploadError(result.status)
         }
@@ -131,6 +132,7 @@ export default class LOG {
       (err) => {
         console.error('日志上报失败:', safeError(err))
         if (typeof window !== 'undefined') window.log_report = false
+        this.handleUploadError(null)
       }
     )
   }
