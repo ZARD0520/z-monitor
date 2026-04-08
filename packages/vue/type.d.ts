@@ -13,6 +13,8 @@ export interface DEFAULT_CONFIG {
   trackList?: string[]
   pluginConfig?: PLUGIN_CONFIG
   Router?: any
+  /** 与后端约定相同字符串时，上报 `/monitor/add` 的 body 将使用 AES-256-GCM 加密 */
+  reportEncryptSecret?: string
 }
 
 export interface PLUGIN_CONFIG {

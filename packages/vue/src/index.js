@@ -63,6 +63,7 @@ export default {
       const mergeConfig = {
         key: options.key,
         url: options.url,
+        reportEncryptSecret: options.reportEncryptSecret,
         plugins: {
           http: mergePluginConfig.http,
           log: mergePluginConfig.log,

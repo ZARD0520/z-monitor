@@ -1,4 +1,4 @@
-import { isFalse, safeError } from '../utils/index'
+import { encryptReportPayload, isReportEncryptSupported, isFalse, safeError } from '../utils/index'
 export default class HTTP {
   constructor({ mt }) {
     this.mt = mt
@@ -78,12 +78,25 @@ export default class HTTP {
   // 内置请求
   async report(data, done, errCatch) {
     // 数据参数
-    const requestParams = JSON.stringify({
+    let requestParams = JSON.stringify({
       platform: this.mt.platformName,
       projectId: this.mt.key,
       sessionId: this.mt.sessionId,
       data,
     })
+
+    const secret = this.mt.options.reportEncryptSecret
+    if (secret) {
+      try {
+        if (!isReportEncryptSupported()) {
+          console.warn('埋点上报：当前环境不支持加密，已发送明文')
+        } else {
+          requestParams = await encryptReportPayload(requestParams, secret)
+        }
+      } catch (e) {
+        console.warn('埋点上报加密失败，使用明文:', safeError(e))
+      }
+    }
 
     try {
       let result

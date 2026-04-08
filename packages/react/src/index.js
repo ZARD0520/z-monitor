@@ -81,6 +81,7 @@ export default function useMonitor(
       const mergeConfig = {
         url: options.url,
         key: options.key,
+        reportEncryptSecret: options.reportEncryptSecret,
         plugins: {
           http: mergePluginConfig.http,
           log: mergePluginConfig.log,

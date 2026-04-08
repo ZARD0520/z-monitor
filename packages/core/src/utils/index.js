@@ -168,3 +168,5 @@ export function getScheduler(fn) {
   }
   return scheduleFlush
 }
+
+export { encryptReportPayload, isReportEncryptSupported } from './reportCrypto.js'
