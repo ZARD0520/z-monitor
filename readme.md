@@ -7,6 +7,7 @@
 - 📦 轻量无依赖：核心包体积仅 <90>KB。
 - 🔧 高度可定制：支持自定义事件、扩展字段、生命周期钩子。
 - 🌐 跨框架兼容：支持 React、Vue，不同框架安装不同的子包。
+- 📉 采样率：支持 `sampleRate` / `sampleMode`，按页面或按事件控制埋点上报比例。
 
 ## 📦 安装(以Vue为例)
 
@@ -32,6 +33,8 @@ pnpm add z-monitor-vue
      url: '服务器地址',
      platform: 'vue3', // 项目对应框架
      key: 'z-admin', // 唯一key
+     // sampleRate: 0.1, // 可选：0～1，埋点采样比例；默认 1 全量
+     // sampleMode: 'session', // 可选：'session'（默认，单页只判定一次）| 'event'（逐条随机）
      trackList: ['userInfo', 'ajax', 'pagePerformance'], // 可选，要采集的信息
      pluginConfig: {
        ajax: {
@@ -87,15 +90,18 @@ pnpm add z-monitor-vue
 
 ## ⚙️ 核心配置
 
-|       参数        |   类型   | 默认值 |                         描述                          |
-| :---------------: | :------: | :----: | :---------------------------------------------------: |
-|        url        |  string  |        |                 必填，上报服务端地址                  |
-|     platform      |  string  |        |        必填，前端框架名称（Vue2、Vue3、React）        |
-|        key        |  string  |        |                   必填，项目唯一key                   |
-|     trackList     | string[] |        | 选填，可选采集的信息：userInfo、ajax、pagePerformance |
-|      Router       |  Router  |        |                    必填，路由实例                     |
-|   pluginConfig    |  Object  |        |                    选填，插件配置                     |
-| pluginConfig.ajax |  Object  |        |                  选填，插件配置-AJAX                  |
+|        参数         |   类型   | 默认值  |                                          描述                                          |
+| :-----------------: | :------: | :-----: | :------------------------------------------------------------------------------------: |
+|         url         |  string  |         |                                  必填，上报服务端地址                                  |
+|      platform       |  string  |         |                        必填，前端框架名称（Vue2、Vue3、React）                         |
+|         key         |  string  |         |                                   必填，项目唯一key                                    |
+|      trackList      | string[] |         |                 选填，可选采集的信息：userInfo、ajax、pagePerformance                  |
+|     sampleRate      |  number  |    1    |            选填，埋点采样比例 0～1；`1` 全量，`0` 不上报；非法值按 `1` 处理            |
+|     sampleMode      |  string  | session | 选填，`session`：当前页生命周期内只随机一次；`event`：每条埋点独立按 `sampleRate` 随机 |
+| reportEncryptSecret |  string  |         |         选填，与后端约定相同密钥时，`/monitor/add` 请求体使用 AES-256-GCM 加密         |
+|       Router        |  Router  |         |                                     必填，路由实例                                     |
+|    pluginConfig     |  Object  |         |                                     选填，插件配置                                     |
+|  pluginConfig.ajax  |  Object  |         |                                  选填，插件配置-AJAX                                   |
 
 ```typescript
 // pluginConfig 全部可选参数

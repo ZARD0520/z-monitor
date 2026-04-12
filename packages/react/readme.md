@@ -8,6 +8,7 @@
 - 🔧 高度可定制：支持自定义事件、扩展字段、生命周期钩子。
 - 🌐 跨框架兼容：支持 React、Vue，不同框架安装不同的子包。
 - 🔒 SSR 兼容：核心通过 `isBrowser()` 检测环境，服务端仅注册不初始化，客户端 hydration 后自动完成采集与上报。
+- 📉 采样率：支持 `sampleRate` / `sampleMode`，按页面或按事件控制埋点上报比例。
 
 ## 📦 安装
 
@@ -38,6 +39,8 @@ pnpm add z-monitor-react
        url: '服务器地址',
        platform: 'react', // 项目对应框架
        key: 'z-admin', // 唯一key
+       // sampleRate: 0.1, // 可选：0～1，埋点采样比例；默认 1 全量
+       // sampleMode: 'session', // 可选：'session'（默认，单页只判定一次）| 'event'（逐条随机）
        trackList: ['userInfo', 'ajax', 'pagePerformance'], // 可选，要采集的信息
      },
      {
@@ -120,6 +123,8 @@ export default function MyApp({ Component, pageProps }) {
       url: '你的上报服务地址',
       platform: 'react',
       key: 'your-project-key',
+      // sampleRate: 0.1,
+      // sampleMode: 'session',
       trackList: ['userInfo', 'ajax', 'pagePerformance'],
     },
     {
@@ -166,15 +171,18 @@ function MyComponent() {
 
 ## ⚙️ 核心配置
 
-|       参数        |   类型   | 默认值 |                              描述                               |
-| :---------------: | :------: | :----: | :-------------------------------------------------------------: |
-|        url        |  string  |        |                      必填，上报服务端地址                       |
-|     platform      |  string  |        |             必填，前端框架名称（Vue2、Vue3、React）             |
-|        key        |  string  |        |                        必填，项目唯一key                        |
-|     trackList     | string[] |        |      选填，可选采集的信息：userInfo、ajax、pagePerformance      |
-| history/pathname  |  Object  |        | 必填，路由实例（React Router 的 history / Next.js 的 pathname） |
-|   pluginConfig    |  Object  |        |                         选填，插件配置                          |
-| pluginConfig.ajax |  Object  |        |                       选填，插件配置-AJAX                       |
+|        参数         |   类型   | 默认值  |                                          描述                                          |
+| :-----------------: | :------: | :-----: | :------------------------------------------------------------------------------------: |
+|         url         |  string  |         |                                  必填，上报服务端地址                                  |
+|      platform       |  string  |         |                        必填，前端框架名称（Vue2、Vue3、React）                         |
+|         key         |  string  |         |                                   必填，项目唯一key                                    |
+|      trackList      | string[] |         |                 选填，可选采集的信息：userInfo、ajax、pagePerformance                  |
+|     sampleRate      |  number  |    1    |            选填，埋点采样比例 0～1；`1` 全量，`0` 不上报；非法值按 `1` 处理            |
+|     sampleMode      |  string  | session | 选填，`session`：当前页生命周期内只随机一次；`event`：每条埋点独立按 `sampleRate` 随机 |
+| reportEncryptSecret |  string  |         |         选填，与后端约定相同密钥时，`/monitor/add` 请求体使用 AES-256-GCM 加密         |
+|  history/pathname   |  Object  |         |            必填，路由实例（React Router 的 history / Next.js 的 pathname）             |
+|    pluginConfig     |  Object  |         |                                     选填，插件配置                                     |
+|  pluginConfig.ajax  |  Object  |         |                                  选填，插件配置-AJAX                                   |
 
 ```typescript
 // pluginConfig 全部可选参数
