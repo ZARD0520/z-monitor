@@ -173,7 +173,6 @@ export function useRouterMonitor(mt, React, history, pathnameFromHook) {
     }
   }, [mt, ifNext, history, pathnameFromHook, prevRoutePath])
 }
-
 export class PerformanceMonitorPlugin extends Plugin {
   init(options = {}) {
     if (typeof window === 'undefined') return

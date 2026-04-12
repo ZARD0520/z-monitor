@@ -17,6 +17,19 @@ export function safeError(err) {
   }
 }
 
+/** 将采样率规范为 [0, 1]，缺省或非法时返回 1（全量上报） */
+export function normalizeSampleRate(rate) {
+  if (rate == null || rate === '') return 1
+  const n = Number(rate)
+  if (!Number.isFinite(n)) {
+    reLog('sampleRate 无效，使用默认 1', 'warn')
+    return 1
+  }
+  if (n <= 0) return 0
+  if (n >= 1) return 1
+  return n
+}
+
 export function reLog(value, type = 'log') {
   if (typeof console[type] === 'function') {
     console[type](value)

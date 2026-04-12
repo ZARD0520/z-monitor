@@ -1,4 +1,12 @@
-import { getObj, getObjType, hasValue, reLog, isBrowser, safeError } from './utils/index'
+import {
+  getObj,
+  getObjType,
+  hasValue,
+  reLog,
+  isBrowser,
+  safeError,
+  normalizeSampleRate,
+} from './utils/index'
 import { LEVELS, TYPES, EMIT_ERROR } from './constant/index'
 import { HTTP, LOG } from './plugins/index'
 import { DEFAULT_SESSION_URL, SESSION_STORAGE_KEY } from './constant/config'
@@ -76,6 +84,16 @@ export class Monitor {
     this.baseInfo = null
     // 上传预处理
     this.beforeReport = options.beforeReport || null
+    // 采样率 [0, 1]，默认 1；sampleMode 为 session 时在页面生命周期内只掷一次骰子
+    this.sampleRate = normalizeSampleRate(options.sampleRate)
+    this.sampleMode = options.sampleMode === 'event' ? 'event' : 'session'
+    if (this.sampleRate >= 1) {
+      this._sampleAllowed = true
+    } else if (this.sampleRate <= 0) {
+      this._sampleAllowed = false
+    } else {
+      this._sampleAllowed = Math.random() < this.sampleRate
+    }
     // 初始化选项
     this.init(options)
   }
@@ -241,7 +259,14 @@ export class Monitor {
     const config = this.getCommonConfig(data)
     return { ...config, ...data }
   }
+  shouldSample() {
+    if (this.sampleRate >= 1) return true
+    if (this.sampleRate <= 0) return false
+    if (this.sampleMode === 'session') return this._sampleAllowed
+    return Math.random() < this.sampleRate
+  }
   send(item) {
+    if (!this.shouldSample()) return
     item = this.assignConfig(item)
     this.plugins.log.push(item)
   }
@@ -318,4 +343,4 @@ export class Monitor {
 }
 
 export * from './plugin'
-export { safeError } from './utils/index'
+export { safeError, normalizeSampleRate } from './utils/index'

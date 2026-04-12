@@ -82,6 +82,8 @@ export default function useMonitor(
         url: options.url,
         key: options.key,
         reportEncryptSecret: options.reportEncryptSecret,
+        sampleRate: options.sampleRate,
+        sampleMode: options.sampleMode,
         plugins: {
           http: mergePluginConfig.http,
           log: mergePluginConfig.log,

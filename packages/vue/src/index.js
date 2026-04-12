@@ -64,6 +64,8 @@ export default {
         key: options.key,
         url: options.url,
         reportEncryptSecret: options.reportEncryptSecret,
+        sampleRate: options.sampleRate,
+        sampleMode: options.sampleMode,
         plugins: {
           http: mergePluginConfig.http,
           log: mergePluginConfig.log,
